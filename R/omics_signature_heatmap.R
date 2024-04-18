@@ -125,7 +125,7 @@ omics_signature_heatmap <- function(
 
   ## 2) with only signature genes
   eset_flt <- eset_srt[Biobase::featureNames(eset_srt) %in% signature[[1]],]
-  stopifnot( nrow(eset_flt) > max(min_sigsize, length(signature) * .25) )
+  stopifnot( nrow(eset_flt) > max(min_sigsize, max(lengths(signature)) * .25) )
 
   sig_heatmap <- suppressMessages(ComplexHeatmap::Heatmap(
     matrix = t(scale(t(exprs(eset_flt)))),

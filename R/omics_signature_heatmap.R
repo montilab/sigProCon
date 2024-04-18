@@ -29,12 +29,13 @@ omics_signature_heatmap <- function(
     gsea = FALSE,
     ...
 ) {
-  ## input checks
+  ## BEGIN input checks
   cor_method = match.arg(cor_method)
   stopifnot( methods::is(eset, "SummarizedExperiment") || methods::is(eset, "ExpressionSet") )
   stopifnot( is.null(sig_score) || length(sig_score)==ncol(eset) )
-  stopifnot( is.null(sig_score) || isTRUE(all.equal(names(sig_score), sampleNames(eset))) )
-  stopifnot( is.null(col_ha) || isTRUE(all(rownames(col_ha) %in% sampleNames(eset))))
+  stopifnot( is.null(sig_score) || isTRUE(all.equal(names(sig_score), Biobase::sampleNames(eset))) )
+  stopifnot( is.null(col_ha) || isTRUE(all(rownames(col_ha) %in% Biobase::sampleNames(eset))))
+  ## END input checks
 
   if ( methods::is(eset, "SummarizedExperiment") ) {
     eset <- Biobase::ExpressionSet(
@@ -55,10 +56,10 @@ omics_signature_heatmap <- function(
   COR <- psych::corr.test(eset$sig_score, t(exprs(eset)), method = cor_method)
   stopifnot(nrow(COR$r)==1)
   stopifnot(nrow(COR$p)==1)
-  fData(eset)$score_cor <- drop(COR$r)
-  fData(eset)$pval_cor <- drop(COR$p)
-  fData(eset)$insig <- factor(
-    ifelse(featureNames(eset) %in% signature[[1]], 'signature', 'background'),
+  Biobase::fData(eset)$score_cor <- drop(COR$r)
+  Biobase::fData(eset)$pval_cor <- drop(COR$p)
+  Biobase::fData(eset)$insig <- factor(
+    ifelse(Biobase::featureNames(eset) %in% signature[[1]], 'signature', 'background'),
     levels = c("signature","background")
   )
   ## PLOTS
@@ -70,8 +71,8 @@ omics_signature_heatmap <- function(
   ]
   ks_out <-   .kstest(
     n.x = nrow(eset),
-    y = rank(-fData(eset)$score_cor)[fData(eset)$insig == "signature"],
-    weights = if (gsea) fData(eset_srt)$score_cor,
+    y = rank(-Biobase::fData(eset)$score_cor)[Biobase::fData(eset)$insig == "signature"],
+    weights = if (gsea) Biobase::fData(eset_srt)$score_cor,
     plotting = TRUE
   )
   ## from idx to names
@@ -87,8 +88,8 @@ omics_signature_heatmap <- function(
       tibble::rownames_to_column(var = "featureID") |>
       dplyr::pull(featureID)
     ## add information about hits in leading edge
-    fData(eset_srt)$leading_edge <-
-      factor(ifelse(featureNames(eset_srt) %in% ks_out$hits, "yes", "no"),
+    Biobase::fData(eset_srt)$leading_edge <-
+      factor(ifelse(Biobase::featureNames(eset_srt) %in% ks_out$hits, "yes", "no"),
              levels = c("yes", "no"))
   }
   if ( is.null(col_ha)) {
@@ -101,11 +102,11 @@ omics_signature_heatmap <- function(
       ComplexHeatmap::HeatmapAnnotation(
         sig_score = ComplexHeatmap::anno_barplot(eset_srt$sig_score)),
       ## next command is not a robust solution, but couldn't find a better way
-      col_ha[match(Biobase::sampleNames(eset_srt),Biobase::sampleNames(eset)),])
+      col_ha[match(Biobase::sampleNames(eset_srt), Biobase::sampleNames(eset)),])
   }
   row_ha <- ComplexHeatmap::rowAnnotation(
     genes = Biobase::fData(eset_srt)$insig,
-    leadedge = ifelse(featureNames(eset_srt) %in% ks_out$hits, "yes", "no"),
+    leadedge = ifelse(Biobase::featureNames(eset_srt) %in% ks_out$hits, "yes", "no"),
     correlation = ComplexHeatmap::anno_barplot(Biobase::fData(eset_srt)$score_cor),
     col = list(genes = c("background" = "brown", "signature" = "lightgreen"),
                leadedge = c(yes = "black", no = "white")),
@@ -128,7 +129,7 @@ omics_signature_heatmap <- function(
   stopifnot( nrow(eset_flt) > max(min_sigsize, max(lengths(signature)) * .25) )
 
   sig_heatmap <- suppressMessages(ComplexHeatmap::Heatmap(
-    matrix = t(scale(t(exprs(eset_flt)))),
+    matrix = t(scale(t(Biobase::exprs(eset_flt)))),
     top_annotation = col_ha,
     cluster_rows = FALSE,
     cluster_columns = FALSE,

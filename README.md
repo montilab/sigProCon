@@ -26,32 +26,32 @@ This is a basic example which shows the format of the data:
 ``` r
 library(evalGSVAsig)
 
-#example gene list
+## example gene list
 sig <- c("GENE1", "GENE2", "GENE3")
-signature_list <- c(list(sig))
+signature_list <- list(sig)
 names(signature_list) <- c("signature1")
 
-#run function
-output <- evalGSVAsig::GSVAsignatureRanking(eset, signature_list)
+## run function
+output <- evalGSVAsig::omics_signature_heatmap(eset, signature_list)
 
-#view output
-#print df of genes ordered by correlation to GSVA scores
+## view output
+## print df of genes ordered by correlation to GSVA scores
 output[[1]]
 
-#show heatmap of ALL gene expression in relation to GSVA score
+## show heatmap of ALL gene expression in relation to GSVA score
 output[[2]]
 
-#show heatmap of SIGNATURE gene expression in relation to GSVA score
+## show heatmap of SIGNATURE gene expression in relation to GSVA score
 output[[3]]
 
-#get expression with GSVA scores saved in pData
+## get expression with GSVA scores saved in pData
 output[[4]]
 ```
 
 With sample data:
 
 ``` r
-#with our sample data
+## with our sample data
 data(signatures)
 data(eset)
 
@@ -61,7 +61,7 @@ output <- evalGSVAsig::GSVAsignatureRanking(eset = eset, signature = signatures,
 View tables:
 
 ``` r
-#This table contains all genes
+## This table contains all genes
 head(output[[1]])
 #>     correlation   gene rank
 #> 470   0.7223057 WFDC12    1
@@ -70,7 +70,7 @@ head(output[[1]])
 #> 458   0.6744871   DSC1    4
 #> 234   0.6293875   DSG1    5
 #> 454   0.6065752   ARG1    6
-#This table contains only signature genes
+## This table contains only signature genes
 head(output[[2]])
 #>     correlation   gene rank
 #> 470   0.7223057 WFDC12    1

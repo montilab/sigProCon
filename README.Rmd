@@ -40,7 +40,7 @@ library(evalGSVAsig)
 sig <- c("GENE1", "GENE2", "GENE3")
 signature_list <- c(list('signature1' = sig))
 
-## run function
+## run function. if sig_score = NULL, score will be provided. Otherwise provide pre-computed score with sig_score = score
 output <- evalGSVAsig::omics_signature_projection(eset = eset, signature = signature_list)
 
 ## view output

@@ -13,7 +13,7 @@ Description: Given a signature and expressionset, this tool first uses GSVA to
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 Imports: 
     GSVA, 
     ComplexHeatmap, 

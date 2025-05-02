@@ -17,7 +17,7 @@
 #' @importFrom grid gpar
 #'
 #' @export
-omics_signature_heatmap <- function(
+omics_signature_projection <- function(
     eset,
     signature,
     sig_score = NULL,

@@ -30,7 +30,7 @@
     xlab = "Position in Ranked List of Genes",
     geom = "line"
   ) +
-    ggplot2::geom_rug(data = data.frame(positions), aes(x = positions), inherit.aes = FALSE) +
+    ggplot2::geom_rug(data = data.frame(positions), aes(x = {{positions}}), inherit.aes = FALSE) +
     ggplot2::geom_hline(yintercept = 0) +
     ggplot2::geom_vline(xintercept = n / 2, linetype = "dotted") +
     ggplot2::annotate("point", x = x_axis[score], y = y_axis[score], color = "red") +

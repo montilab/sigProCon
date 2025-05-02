@@ -26,7 +26,8 @@ omics_signature_score <- function(
 
   sig_score <- {
     if (method == "GSVA") {
-      tmp <- GSVA::gsva(eset, signature, verbose = FALSE)
+      gsvaPar <- GSVA::gsvaParam(eset, signature)
+      tmp <- GSVA::gsva(gsvaPar, verbose = FALSE)
       stopifnot(nrow(tmp)==1) # working w/ single signature only at the moment
       t(exprs(tmp)) |>
         data.frame(check.names = FALSE) |>

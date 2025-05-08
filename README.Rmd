@@ -18,7 +18,14 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of evalGSVAsig is to identify which genes from a signature are contributing most to a score (e.g., GSVA score).
+It's common to have a signature of genes, then to give each sample in a bulk rna-seq dataset a score reflecting the activity of that signature, such as by GSVA.
+
+The goal of evalGSVAsig is to identify which genes from a signature are contributing most to the sample signature activity scores across all samples.  
+
+For example, one may have a signature of genes that are upregulated during the process of epithelial to mesencymal transition (EMT), which is associated with tumor metastasis.
+One can use a tool (such as GSVA) to assign a score to each patient in the TCGA dataset based on each patient's gene expression profile, that corresponds to how 'active' the EMT signature is in each patient.  It would suggest that a patient with a higher score has more activity of the genes in the EMT geneset, and thus may have a more aggressive tumor.  
+
+This package simply takes the correlation of each gene in the signature with the signature score, to identify the genes that are contributing most to the score.  
 
 ## Installation
 
@@ -26,7 +33,7 @@ You can install the development version of evalGSVAsig from [GitHub](https://git
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("montilab/evalGSVAsig")
+devtools::install_github("montilab/evalGSVAsig", ref = "develop")
 ```
 
 ## Example
@@ -61,15 +68,15 @@ With sample data:
 
 ```{r plots, message=FALSE, warning=FALSE, results='hide' }
 #with our sample data
-data(signatures)
+data(signature)
 data(eset)
 
 output <- evalGSVAsig::omics_signature_projection(
   eset = eset, 
   signature = signatures, 
   metacol = ComplexHeatmap::HeatmapAnnotation( 
-    df = pData(eset) |> dplyr::select(hpv_status),
-    col = list(pheno = c(pos = "pink", neg = "gray"))))
+    df = pData(eset) |> dplyr::select(Group),
+    col = list(pheno = c(Treated = "pink", Control = "gray"))))
 ```
 
 View tables:

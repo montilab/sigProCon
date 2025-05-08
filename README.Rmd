@@ -73,10 +73,7 @@ data(eset)
 
 output <- evalGSVAsig::omics_signature_projection(
   eset = eset, 
-  signature = signature, 
-  metacol = ComplexHeatmap::HeatmapAnnotation( 
-    df = pData(eset) |> dplyr::select(Group),
-    col = list(pheno = c(Treated = "pink", Control = "gray"))))
+  signature = signature)
 ```
 
 View tables:
@@ -100,3 +97,8 @@ View heatmap that plots only signature genes:
 print(output$heatmap_sig_genes)
 ```
 
+View k.s. plot of signature genes and scores:
+
+```{r ksplot, dpi=300}
+print(output$ks$plot)
+```

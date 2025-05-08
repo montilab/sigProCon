@@ -72,9 +72,7 @@ omics_signature_projection <- function(
   ks_out <-   .kstest(
     n.x = nrow(eset),
     y = rank(-Biobase::fData(eset)$score_cor)[Biobase::fData(eset)$insig == "signature"],
-    #weights = if (gsea) Biobase::fData(eset_srt)$score_cor,
-    #weights = if (gsea) Biobase::fData(eset_srt)$score_cor else NULL,
-    weights = NULL,
+    weights = if (gsea) Biobase::fData(eset_srt)$score_cor,
     plotting = TRUE
   )
   ## from idx to names

@@ -33,7 +33,7 @@ You can install the development version of evalGSVAsig from [GitHub](https://git
 
 ``` r
 # install.packages("devtools")
-devtools::install_github("montilab/evalGSVAsig", ref = "develop")
+devtools::install_github("montilab/evalGSVAsig@dev")
 ```
 
 ## Example

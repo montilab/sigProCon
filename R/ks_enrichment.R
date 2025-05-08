@@ -92,7 +92,7 @@
     Phit <- rep(0, n.x)
     Phit[y] <- weights
     Phit <- cumsum(Phit)
-    Phit <- Phit / Phit[n.x]
+    Phit <- Phit / Phit[n.x] #this making error?
     z <- Phit - Pmis
 
     score <- if (absolute) max(z) - min(z) else z[leading_edge <- which.max(abs(z))]

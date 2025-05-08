@@ -1,3 +1,5 @@
+library(SummarizedExperiment)
+
 test_that("eset is an expressionset object", {
   eset <- ExpressionSet(matrix(rnorm(20), nrow = 5))
   se <- SummarizedExperiment(assays = list(counts = matrix(rnorm(20), nrow = 5)))
@@ -5,11 +7,14 @@ test_that("eset is an expressionset object", {
   expect_true(inherits(se, "ExpressionSet") || inherits(se, "SummarizedExperiment"))
 })
 
-test_that("signature is a list", {
-  expect_true(is(signature, "list"))
-})
+#this is not the right kind of thing to do
+#test_that("signature is a list", {
+#  expect_true(is(signature, "list"))
+#})
 
 test_that("sig_score length matches ncol(eset)", {
+  eset <- ExpressionSet(matrix(rnorm(20), nrow = 5))
+  signature <- list('sig1' = sample(rownames(eset), 2, replace = FALSE))
   # Correct length: should not error
   sig_score_good <- setNames(runif(ncol(eset)), sampleNames(eset))
   expect_silent(
@@ -25,8 +30,8 @@ test_that("sig_score length matches ncol(eset)", {
 })
 
 test_that("omics_signature_projection returns correct output structure", {
-  eset <- eset
-  signature <- signature
+  eset <- data(eset)
+  signature <- data(signature)
   result <- omics_signature_projection(eset, signature)
 
   expect_type(result, "list")

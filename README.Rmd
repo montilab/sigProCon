@@ -23,7 +23,7 @@ It's common to have a signature of genes, then to give each sample in a bulk rna
 The goal of evalGSVAsig is to identify which genes from a signature are contributing most to the sample signature activity scores across all samples.  
 
 For example, one may have a signature of genes that are upregulated during the process of epithelial to mesencymal transition (EMT), which is associated with tumor metastasis.
-One can use a tool (such as GSVA) to assign a score to each patient in the TCGA dataset based on each patient's gene expression profile, that corresponds to how 'active' the EMT signature is in each patient.  It would suggest that a patient with a higher score has more activity of the genes in the EMT geneset, and thus may have a more aggressive tumor.  
+One can use a tool (such as GSVA) to assign a score to each patient in the TCGA dataset based on each patient's gene expression profile, that corresponds to how 'active' the EMT signature is in each patient.  It would suggest that a patient with a higher score has more activity of the genes in the EMT geneset, and thus may have a more aggressive tumor.  Some genes will be very correlated with the score, suggesting their large role in EMT in this particular set of samples, while some genes in the EMT signature may have very little correlation.
 
 This package simply takes the correlation of each gene in the signature with the signature score, to identify the genes that are contributing most to the score.  
 

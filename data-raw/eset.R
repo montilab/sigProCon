@@ -36,6 +36,5 @@ eset <- ExpressionSet(
   phenoData = AnnotatedDataFrame(phenoData)
 )
 
-
 # Write to to rda and save in the data folder
 usethis::use_data(eset, overwrite = TRUE)

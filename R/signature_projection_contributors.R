@@ -3,8 +3,12 @@
 #' @param eset an expression set
 #' @param signature a list of signatures (at least 1)
 #' @param sig_score an aggregate signature score
+#' @param cor_method correlation method used by \code{psych::corr.test}
 #' @param col_ha a ComplexHeatmap::heatmapAnnotation object with columns' (i.e., samples') annotation
+#' @param min_sigsize minimum number of signature genes required to plot signature-only heatmap
 #' @param method how to compute the aggregate score (only GSVA at the moment)
+#' @param name name for the heatmap
+#' @param gsea logical, whether to use weighted KS statistic
 #' @param ... additional parameters to pass to the method
 #'
 #' @return a list of a dataframe and two heatmaps
@@ -15,9 +19,10 @@
 #' @importFrom stats cor
 #' @importFrom methods is
 #' @importFrom grid gpar
+#' @importFrom psych corr.test
 #'
 #' @export
-omics_signature_projection <- function(
+signature_projection_contributors <- function(
     eset,
     signature,
     sig_score = NULL,
@@ -82,11 +87,10 @@ omics_signature_projection <- function(
   } else if (!is.null(ks_out$leading_edge) && ks_out$leading_edge == 0) {
     ks_out$hits <- NA
   } else {
-    ks_out$hits <- Biobase::fData(eset_srt) |>
-      dplyr::slice_head(n = ks_out$leading_edge) |>
-      dplyr::filter(insig == "signature") |>
-      tibble::rownames_to_column(var = "featureID") |>
-      dplyr::pull(featureID)
+    leading_genes <- Biobase::fData(eset_srt)
+    leading_genes <- leading_genes[seq_len(ks_out$leading_edge), , drop = FALSE]
+    leading_genes <- leading_genes[leading_genes$insig == "signature", , drop = FALSE]
+    ks_out$hits <- rownames(leading_genes)
     ## add information about hits in leading edge
     Biobase::fData(eset_srt)$leading_edge <-
       factor(ifelse(Biobase::featureNames(eset_srt) %in% ks_out$hits, "yes", "no"),
@@ -145,10 +149,8 @@ omics_signature_projection <- function(
       correlation = ComplexHeatmap::anno_barplot(Biobase::fData(eset_flt)$score_cor))
 
   return(list(
-    score_cor = Biobase::fData(eset_srt) |>
-      dplyr::select(score_cor, pval_cor, insig, leading_edge),
-    sig_score = Biobase::pData(eset_srt) |>
-      dplyr::select(sig_score),
+    score_cor = Biobase::fData(eset_srt)[, c("score_cor", "pval_cor", "insig", "leading_edge"), drop = FALSE],
+    sig_score = Biobase::pData(eset_srt)[, "sig_score", drop = FALSE],
     heatmap_all_genes = full_heatmap,
     heatmap_sig_genes = sig_heatmap,
     ks = ks_out

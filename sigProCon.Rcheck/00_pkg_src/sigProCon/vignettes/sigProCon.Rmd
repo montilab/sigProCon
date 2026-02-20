@@ -1,0 +1,15 @@
+---
+title: "sigProCon"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{sigProCon}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
+
+```{r setup}
+library(sigProCon)
+x <- 100
+```

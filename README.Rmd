@@ -43,19 +43,13 @@ devtools::install_github("montilab/sigProCon@dev")
 ```{r toy-example, eval=FALSE, message=FALSE, warning=FALSE}
 data(toy_signature)
 data(toy_eset)
-
-toy_output <- sigProCon::signature_projection_contributors(
-  eset = toy_eset,
-  signature = list(signature1 = toy_signature)
-)
+print(dim(toy_signature))
+print(dim(toy_eset))
 ```
 
 ### View toy data tables:
 
 ```{r toy-tables, message=FALSE, warning=FALSE}
-data(toy_signature)
-data(toy_eset)
-
 toy_output <- sigProCon::signature_projection_contributors(
   eset = toy_eset,
   signature = list(signature1 = toy_signature)

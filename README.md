@@ -113,7 +113,6 @@ print(head(toy_output$score_cor))
 #> gene_008 0.7645522 8.655076e-05 signature          yes
 #> gene_007 0.7428196 1.756087e-04 signature          yes
 #> gene_001 0.7110160 4.408161e-04 signature          yes
-
 ## Show some of the signature scores
 print(head(toy_output$sig_score))
 #>           sig_score

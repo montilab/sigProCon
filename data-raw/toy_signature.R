@@ -5,7 +5,10 @@ ngenes <- 100  # number of genes
 sig_len <- 10  # signature length
 
 feature_names <- sprintf("gene_%03d", seq(1, ngenes))
-toy_signature <- feature_names[c(seq(1, sig_len), sample(seq(sig_len + 1, ngenes), size = 3))]
+toy_signature <- feature_names[c(
+  seq(1, sig_len),  # the top sig_len genes are the ones highly correlated w/ the score
+  sample(seq(sig_len + 1, ngenes), size = 3)) # we add three random (uncorrelated ones)
+]
 
 # Write to rda and save in the data folder
 usethis::use_data(toy_signature, overwrite = TRUE)

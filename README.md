@@ -4,6 +4,7 @@
 # sigProCon
 
 <!-- badges: start -->
+
 <!-- badges: end -->
 
 It’s common to have a signature of genes, then to give each sample in a
@@ -91,6 +92,62 @@ full_output <- sigProCon::signature_projection_contributors(
   signature = signatures
 )
 ```
+
+View toy data tables:
+
+``` r
+data(toy_signature)
+data(toy_eset)
+
+toy_output <- sigProCon::signature_projection_contributors(
+  eset = toy_eset,
+  signature = list(signature1 = toy_signature)
+)
+
+## Show some of the genes' correlation to the signature score
+print(head(toy_output$score_cor))
+#>          score_cor     pval_cor     insig leading_edge
+#> gene_009 0.9117601 2.228287e-08 signature          yes
+#> gene_010 0.8923537 1.239783e-07 signature          yes
+#> gene_003 0.7753862 5.913725e-05 signature          yes
+#> gene_008 0.7645522 8.655076e-05 signature          yes
+#> gene_007 0.7428196 1.756087e-04 signature          yes
+#> gene_001 0.7110160 4.408161e-04 signature          yes
+
+## Show some of the signature scores
+print(head(toy_output$sig_score))
+#>           sig_score
+#> sample_06 0.5496272
+#> sample_11 0.5329154
+#> sample_03 0.5251103
+#> sample_16 0.4113453
+#> sample_19 0.3909520
+#> sample_07 0.2712722
+```
+
+View toy heatmap that plots all signature and non-signature genes:
+
+``` r
+print(toy_output$heatmap_all_genes)
+```
+
+<img src="man/figures/README-toy-full.heatmap-1.png" width="100%" />
+
+View toy heatmap that plots only signature genes:
+
+``` r
+print(toy_output$heatmap_sig_genes)
+```
+
+<img src="man/figures/README-toy-sig.heatmap-1.png" width="100%" />
+
+View toy k.s. plot of signature genes and scores:
+
+``` r
+print(toy_output$ks$plot)
+```
+
+<img src="man/figures/README-toy-ksplot-1.png" width="100%" />
 
 Plots below use the package sample dataset:
 

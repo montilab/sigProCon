@@ -1,0 +1,11 @@
+.ggempty                An empty ggplot
+.ggeplot                Enrichment plot implemented in ggplot
+eset                    Example ExpressionSet
+omics_signature_score   This function computes an aggregate score for a
+                        set of genes
+signature               Example Signature
+signature_projection_contributors
+                        This function generates an annotated heatmap
+                        that shows the contributions of genes to the
+                        given signature score
+signatures              Example Signatures

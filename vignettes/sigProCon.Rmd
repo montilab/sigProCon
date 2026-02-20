@@ -1,8 +1,8 @@
 ---
-title: "evalGSVAsig"
+title: "sigProCon"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{evalGSVAsig}
+  %\VignetteIndexEntry{sigProCon}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -10,6 +10,6 @@ vignette: >
 
 
 ```{r setup}
-library(evalGSVAsig)
+library(sigProCon)
 x <- 100
 ```

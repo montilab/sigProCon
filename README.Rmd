@@ -11,6 +11,8 @@ knitr::opts_chunk$set(
   fig.path = "man/figures/README-",
   out.width = "100%"
 )
+
+pkgload::load_all(".", quiet = TRUE, export_all = FALSE, helpers = FALSE)
 ```
 
 # sigProCon
@@ -86,6 +88,41 @@ full_output <- sigProCon::signature_projection_contributors(
   eset = eset,
   signature = signatures
 )
+```
+
+View toy data tables:
+
+```{r toy-tables, message=FALSE, warning=FALSE}
+data(toy_signature)
+data(toy_eset)
+
+toy_output <- sigProCon::signature_projection_contributors(
+  eset = toy_eset,
+  signature = list(signature1 = toy_signature)
+)
+
+## Show some of the genes' correlation to the signature score
+print(head(toy_output$score_cor))
+## Show some of the signature scores
+print(head(toy_output$sig_score))
+```
+
+View toy heatmap that plots all signature and non-signature genes:
+
+```{r toy-full.heatmap, dpi=300}
+print(toy_output$heatmap_all_genes)
+```
+
+View toy heatmap that plots only signature genes:
+
+```{r toy-sig.heatmap, dpi=300}
+print(toy_output$heatmap_sig_genes)
+```
+
+View toy k.s. plot of signature genes and scores:
+
+```{r toy-ksplot, dpi=300}
+print(toy_output$ks$plot)
 ```
 
 Plots below use the package sample dataset:

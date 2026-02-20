@@ -1,7 +1,5 @@
 ## code to prepare `signature` dataset goes here
 
-usethis::use_data(signature, overwrite = TRUE)
-
 set.seed(7)
 
 #create a signature of 100 random genes that are in our eset.

@@ -1,7 +1,5 @@
 ## code to prepare `eset` dataset goes here
 
-usethis::use_data(eset, overwrite = TRUE)
-
 set.seed(7)
 
 # Simulate expression matrix (genes x samples)

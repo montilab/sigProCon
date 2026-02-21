@@ -40,10 +40,10 @@ devtools::install_github("montilab/sigProCon@dev")
 
 ## Example with toy sample data:
 
-```{r toy-example, eval=FALSE, message=FALSE, warning=FALSE}
+```{r toy-example, message=FALSE, warning=FALSE}
 data(toy_signature)
 data(toy_eset)
-print(dim(toy_signature))
+print(length(toy_signature))
 print(dim(toy_eset))
 ```
 
@@ -78,6 +78,24 @@ print(toy_output$heatmap_sig_genes)
 
 ```{r toy-ksplot, dpi=300}
 print(toy_output$ks$plot)
+```
+
+#### Passing a pre-computed score
+```{r toy-tables-precomputed, message=FALSE, warning=FALSE}
+toy_score <- sigProCon::omics_signature_score(
+  eset = toy_eset,
+  signature = list(signature1 = toy_signature),
+  method = "GSVA"
+)
+## call w/ pre-computed score 
+toy_output_precomp <- sigProCon::signature_projection_contributors(
+  eset = toy_eset,
+  signature = list(signature1 = toy_signature),
+  sig_score = toy_score
+)
+## same results
+isTRUE(all.equal(toy_output$score_cor, toy_output_precomp$score_cor))
+isTRUE(all.equal(toy_output$sig_score, toy_output_precomp$sig_score))
 ```
 
 ## Example with package sample data (`eset` and `signature`):

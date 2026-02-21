@@ -38,64 +38,18 @@ You can install the development version of sigProCon from [GitHub](https://githu
 devtools::install_github("montilab/sigProCon@dev")
 ```
 
-## Example
-
-This is a basic example which shows the format of the data:
-
-```{r example, eval=FALSE, message=FALSE, warnings=FALSE }
-library(sigProCon)
-
-## example gene list
-sig <- c("Gene1", "Gene2", "Gene3")
-signature_list <- c(list('signature1' = sig))
-
-## run function. if sig_score = NULL, score will be provided. Otherwise provide pre-computed score with sig_score = score
-output <- sigProCon::signature_projection_contributors(eset = eset, signature = signature_list)
-
-## view output
-## data.frame of genes ordered by correlation to signature score
-print(output$score_cor)
-
-## data.frame of samples ordered by signature score
-print(output$sig_score)
-
-#show heatmap of ALL gene expression in relation to GSVA score
-print(output$heatmap_all_genes)
-
-#show heatmap of SIGNATURE gene expression in relation to GSVA score
-print(output$heatmap_sig_genes)
-```
-
-With toy sample data:
+## Example with toy sample data:
 
 ```{r toy-example, eval=FALSE, message=FALSE, warning=FALSE}
 data(toy_signature)
 data(toy_eset)
-
-toy_output <- sigProCon::signature_projection_contributors(
-  eset = toy_eset,
-  signature = list(signature1 = toy_signature)
-)
+print(dim(toy_signature))
+print(dim(toy_eset))
 ```
 
-With package sample data (`eset` and `signatures`):
-
-```{r full-example, eval=FALSE, message=FALSE, warning=FALSE}
-data(signatures)
-data(eset)
-
-full_output <- sigProCon::signature_projection_contributors(
-  eset = eset,
-  signature = signatures
-)
-```
-
-View toy data tables:
+### View toy data tables:
 
 ```{r toy-tables, message=FALSE, warning=FALSE}
-data(toy_signature)
-data(toy_eset)
-
 toy_output <- sigProCon::signature_projection_contributors(
   eset = toy_eset,
   signature = list(signature1 = toy_signature)
@@ -103,29 +57,30 @@ toy_output <- sigProCon::signature_projection_contributors(
 
 ## Show some of the genes' correlation to the signature score
 print(head(toy_output$score_cor))
+
 ## Show some of the signature scores
 print(head(toy_output$sig_score))
 ```
 
-View toy heatmap that plots all signature and non-signature genes:
+### View toy heatmap that plots all signature and non-signature genes:
 
 ```{r toy-full.heatmap, dpi=300}
 print(toy_output$heatmap_all_genes)
 ```
 
-View toy heatmap that plots only signature genes:
+### View toy heatmap that plots only signature genes:
 
 ```{r toy-sig.heatmap, dpi=300}
 print(toy_output$heatmap_sig_genes)
 ```
 
-View toy k.s. plot of signature genes and scores:
+### View toy k.s. plot of signature genes and scores:
 
 ```{r toy-ksplot, dpi=300}
 print(toy_output$ks$plot)
 ```
 
-Plots below use the package sample dataset:
+## Example with package sample data (`eset` and `signature`):
 
 ```{r plots, message=FALSE, warning=FALSE, results='hide' }
 #with our sample data
@@ -137,7 +92,7 @@ output <- sigProCon::signature_projection_contributors(
   signature = signature)
 ```
 
-View tables:
+### View tables:
 
 ```{r tables}
 ## Show some of the genes' correlation to the signature score
@@ -146,19 +101,19 @@ print(head(output$score_cor))
 print(head(output$sig_score))
 ```
 
-View heatmap that plots all signature and non-signature genes:
+### View heatmap that plots all signature and non-signature genes:
 
 ```{r full.heatmap, dpi=300}
 print(output$heatmap_all_genes)
 ```
 
-View heatmap that plots only signature genes:
+### View heatmap that plots only signature genes:
 
 ```{r sig.heatmap, dpi=300}
 print(output$heatmap_sig_genes)
 ```
 
-View k.s. plot of signature genes and scores:
+### View k.s. plot of signature genes and scores:
 
 ```{r ksplot, dpi=300}
 print(output$ks$plot)

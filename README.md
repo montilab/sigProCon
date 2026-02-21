@@ -41,35 +41,7 @@ You can install the development version of sigProCon from
 devtools::install_github("montilab/sigProCon@dev")
 ```
 
-## Example
-
-This is a basic example which shows the format of the data:
-
-``` r
-library(sigProCon)
-
-## example gene list
-sig <- c("Gene1", "Gene2", "Gene3")
-signature_list <- c(list('signature1' = sig))
-
-## run function. if sig_score = NULL, score will be provided. Otherwise provide pre-computed score with sig_score = score
-output <- sigProCon::signature_projection_contributors(eset = eset, signature = signature_list)
-
-## view output
-## data.frame of genes ordered by correlation to signature score
-print(output$score_cor)
-
-## data.frame of samples ordered by signature score
-print(output$sig_score)
-
-#show heatmap of ALL gene expression in relation to GSVA score
-print(output$heatmap_all_genes)
-
-#show heatmap of SIGNATURE gene expression in relation to GSVA score
-print(output$heatmap_sig_genes)
-```
-
-With toy sample data:
+## Example with toy sample data:
 
 ``` r
 data(toy_signature)
@@ -81,19 +53,7 @@ toy_output <- sigProCon::signature_projection_contributors(
 )
 ```
 
-With package sample data (`eset` and `signatures`):
-
-``` r
-data(signatures)
-data(eset)
-
-full_output <- sigProCon::signature_projection_contributors(
-  eset = eset,
-  signature = signatures
-)
-```
-
-View toy data tables:
+### View toy data tables:
 
 ``` r
 data(toy_signature)
@@ -125,7 +85,7 @@ print(head(toy_output$sig_score))
 #> sample_07 0.2712722
 ```
 
-View toy heatmap that plots all signature and non-signature genes:
+### View toy heatmap that plots all signature and non-signature genes:
 
 ``` r
 print(toy_output$heatmap_all_genes)
@@ -133,7 +93,7 @@ print(toy_output$heatmap_all_genes)
 
 <img src="man/figures/README-toy-full.heatmap-1.png" width="100%" />
 
-View toy heatmap that plots only signature genes:
+### View toy heatmap that plots only signature genes:
 
 ``` r
 print(toy_output$heatmap_sig_genes)
@@ -141,7 +101,7 @@ print(toy_output$heatmap_sig_genes)
 
 <img src="man/figures/README-toy-sig.heatmap-1.png" width="100%" />
 
-View toy k.s. plot of signature genes and scores:
+### View toy k.s. plot of signature genes and scores:
 
 ``` r
 print(toy_output$ks$plot)
@@ -149,7 +109,7 @@ print(toy_output$ks$plot)
 
 <img src="man/figures/README-toy-ksplot-1.png" width="100%" />
 
-Plots below use the package sample dataset:
+## Example with package sample data (`eset` and `signature`):
 
 ``` r
 #with our sample data
@@ -161,7 +121,7 @@ output <- sigProCon::signature_projection_contributors(
   signature = signature)
 ```
 
-View tables:
+### View tables:
 
 ``` r
 ## Show some of the genes' correlation to the signature score
@@ -184,7 +144,7 @@ print(head(output$sig_score))
 #> Sample6  0.09226228
 ```
 
-View heatmap that plots all signature and non-signature genes:
+### View heatmap that plots all signature and non-signature genes:
 
 ``` r
 print(output$heatmap_all_genes)
@@ -192,7 +152,7 @@ print(output$heatmap_all_genes)
 
 <img src="man/figures/README-full.heatmap-1.png" width="100%" />
 
-View heatmap that plots only signature genes:
+### View heatmap that plots only signature genes:
 
 ``` r
 print(output$heatmap_sig_genes)
@@ -200,7 +160,7 @@ print(output$heatmap_sig_genes)
 
 <img src="man/figures/README-sig.heatmap-1.png" width="100%" />
 
-View k.s. plot of signature genes and scores:
+### View k.s. plot of signature genes and scores:
 
 ``` r
 print(output$ks$plot)

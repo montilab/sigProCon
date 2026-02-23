@@ -1,15 +1,15 @@
 Package: sigProCon
 Type: Package
-Title: Evaluate genes from signature driving GSVA score in eset
+Title: Evaluate Genes Driving Signature Scores in ExpressionSet
 Version: 0.1.0.9000
 Author: Lina Kroehling
 Maintainer: Lina Kroehling <lkroeh@bu.edu>
-Description: Given a signature and expressionset, this tool first uses GSVA to 
-    score each sample using the signature gene set. 
+Description: Given a signature and ExpressionSet, this tool computes a per-sample
+    signature score using GSVA or eigengene-based scoring.
     The main purpose of this tool is to interrogate which genes are contributing most
-    to the resulting GSVA scores. 
+    to the resulting signature scores.
     This tool finds the correlation of each gene in the eset with the
-    produced GSVA score, and returns a ranked list of genes, and two heatmaps.
+    produced signature score, and returns a ranked list of genes, and two heatmaps.
 License: GPL (>= 3)
 Encoding: UTF-8
 LazyData: false
@@ -28,6 +28,8 @@ Imports:
 Suggests: 
     rmarkdown,
     knitr,
+    purrr,
+    WGCNA,
     testthat (>= 3.0.0)
 Config/testthat/edition: 3
 URL: https://github.com/montilab/sigProCon

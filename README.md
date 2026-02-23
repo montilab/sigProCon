@@ -106,6 +106,8 @@ print(toy_output$ks$plot)
 
 <img src="man/figures/README-toy-ksplot-1.png" width="100%" />
 
+`omics_signature_score()` supports `"GSVA"`, `"eigengene"`, and `"pc"` methods.
+
 #### Passing a pre-computed score
 
 ``` r
@@ -113,6 +115,11 @@ toy_score <- sigProCon::omics_signature_score(
   eset = toy_eset,
   signature = list(signature1 = toy_signature),
   method = "GSVA"
+)
+toy_score_eigengene <- sigProCon::omics_signature_score(
+  eset = toy_eset,
+  signature = list(signature1 = toy_signature),
+  method = "eigengene"
 )
 ## call w/ pre-computed score 
 toy_output_precomp <- sigProCon::signature_projection_contributors(

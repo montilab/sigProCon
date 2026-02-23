@@ -4,14 +4,14 @@
 \alias{omics_signature_score}
 \title{This function computes an aggregate score for a set of genes}
 \usage{
-omics_signature_score(eset, signature, method = c("GSVA"), ...)
+omics_signature_score(eset, signature, method = c("GSVA", "eigengene", "pc"), ...)
 }
 \arguments{
 \item{eset}{an expression set}
 
 \item{signature}{a list of signatures (at least 1)}
 
-\item{method}{how to compute the aggregate score (only GSVA at the moment)}
+\item{method}{how to compute the aggregate score (\code{"GSVA"}, \code{"eigengene"}, or \code{"pc"})}
 
 \item{...}{additional parameters to pass to the method}
 }

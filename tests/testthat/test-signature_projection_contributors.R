@@ -10,6 +10,26 @@ build_test_eset <- function(n_genes = 30, n_samples = 8) {
   Biobase::ExpressionSet(mat)
 }
 
+skip_if_wgcna_unavailable <- function() {
+  rscript <- Sys.which("Rscript")
+  if (nzchar(rscript)) {
+    tf <- tempfile(fileext = ".R")
+    on.exit(unlink(tf), add = TRUE)
+    writeLines("suppressPackageStartupMessages(library(WGCNA));cat('ok')", tf)
+    status <- system2(
+      rscript,
+      tf,
+      stdout = FALSE,
+      stderr = FALSE
+    )
+    if (!identical(status, 0L)) {
+      testthat::skip("WGCNA runtime is unavailable in this environment")
+    }
+  } else {
+    testthat::skip_if_not_installed("WGCNA")
+  }
+}
+
 test_that("eset is an expressionset object", {
   eset <- ExpressionSet(matrix(rnorm(20), nrow = 5))
   se <- SummarizedExperiment(assays = list(counts = matrix(rnorm(20), nrow = 5)))
@@ -54,4 +74,35 @@ test_that("signature_projection_contributors returns correct output structure", 
   expect_true(any(inherits(result$heatmap_all_genes, c("Heatmap", "HeatmapList"))))
   expect_true(any(inherits(result$heatmap_sig_genes, c("Heatmap", "HeatmapList"))))
   expect_true(is.list(result$ks))
+})
+
+test_that("signature_projection_contributors supports eigengene score method", {
+  skip_if_wgcna_unavailable()
+  eset <- build_test_eset(n_genes = 40, n_samples = 10)
+  signature <- list(sig1 = sample(rownames(eset), 12, replace = FALSE))
+
+  result <- sigProCon::signature_projection_contributors(
+    eset = eset,
+    signature = signature,
+    method = "eigengene"
+  )
+
+  expect_type(result, "list")
+  expect_true(all(c("score_cor", "sig_score", "heatmap_all_genes", "heatmap_sig_genes", "ks") %in% names(result)))
+  expect_equal(nrow(result$sig_score), unname(ncol(eset)))
+})
+
+test_that("signature_projection_contributors supports pc score method", {
+  eset <- build_test_eset(n_genes = 40, n_samples = 10)
+  signature <- list(sig1 = sample(rownames(eset), 12, replace = FALSE))
+
+  result <- sigProCon::signature_projection_contributors(
+    eset = eset,
+    signature = signature,
+    method = "pc"
+  )
+
+  expect_type(result, "list")
+  expect_true(all(c("score_cor", "sig_score", "heatmap_all_genes", "heatmap_sig_genes", "ks") %in% names(result)))
+  expect_equal(nrow(result$sig_score), unname(ncol(eset)))
 })

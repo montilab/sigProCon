@@ -2,7 +2,7 @@
 #'
 #' @param eset an expression set
 #' @param signature a list of signatures (at least 1)
-#' @param method how to compute the aggregate score (only GSVA at the moment)
+#' @param method how to compute the aggregate score (`"GSVA"`, `"eigengene"`, or `"pc"`)
 #' @param ... additional parameters to pass to the method
 #'
 #' @return a named numeric vector of scores (w/ the names corresponding to colnames(eset))
@@ -15,7 +15,7 @@
 omics_signature_score <- function(
     eset,
     signature,
-    method = c("GSVA"),
+    method = c("GSVA", "eigengene", "pc"),
     ...)
 {
   ## input checks
@@ -33,7 +33,13 @@ omics_signature_score <- function(
         data.frame(check.names = FALSE) |>
         tibble::rownames_to_column() |>
         tibble::deframe()
-    } else {
+    } else if (method == "eigengene") {
+      tmp <- extract_eigengenes(eset = eset, signatures = signature)
+      exprs(tmp)[1,]
+    } else if (method == "pc") {
+      extract_pc(eset = eset, sig = signature[[1]], ...)
+    }
+    else {
       stop( "unrecognized method:", method)
     }
   }

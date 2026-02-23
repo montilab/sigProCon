@@ -11,7 +11,7 @@ signature_projection_contributors(
   cor_method = c("pearson", "spearman", "kendall"),
   col_ha = NULL,
   min_sigsize = 3,
-  method = c("GSVA"),
+  method = c("GSVA", "eigengene", "pc"),
   name = "expression",
   gsea = FALSE,
   ...
@@ -30,7 +30,7 @@ signature_projection_contributors(
 
 \item{min_sigsize}{minimum number of signature genes required to plot signature-only heatmap}
 
-\item{method}{how to compute the aggregate score (only GSVA at the moment)}
+\item{method}{how to compute the aggregate score (\code{"GSVA"}, \code{"eigengene"}, or \code{"pc"})}
 
 \item{name}{name for the heatmap}
 

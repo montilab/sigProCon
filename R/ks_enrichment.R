@@ -40,7 +40,7 @@
       plot.title = ggplot2::element_text(hjust = 0.5),
       panel.background = ggplot2::element_blank(),
       axis.line = ggplot2::element_line(color = "black"),
-      panel.border = ggplot2::element_rect(color = "black", fill = NA, size = 1)
+      panel.border = ggplot2::element_rect(color = "black", fill = NA, linewidth = 1)
     )
 }
 ## this needs to extrapolate so that x and y are same lenght as n

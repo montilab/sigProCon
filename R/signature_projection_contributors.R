@@ -6,7 +6,7 @@
 #' @param cor_method correlation method used by \code{psych::corr.test}
 #' @param col_ha a ComplexHeatmap::heatmapAnnotation object with columns' (i.e., samples') annotation
 #' @param min_sigsize minimum number of signature genes required to plot signature-only heatmap
-#' @param method how to compute the aggregate score (only GSVA at the moment)
+#' @param method how to compute the aggregate score (`"GSVA"`, `"eigengene"`, or `"pc"`)
 #' @param name name for the heatmap
 #' @param gsea logical, whether to use weighted KS statistic
 #' @param ... additional parameters to pass to the method
@@ -29,7 +29,7 @@ signature_projection_contributors <- function(
     cor_method = c("pearson", "spearman", "kendall"),
     col_ha = NULL,
     min_sigsize = 3,
-    method = c("GSVA"),
+    method = c("GSVA", "eigengene", "pc"),
     name = "expression",
     gsea = FALSE,
     ...

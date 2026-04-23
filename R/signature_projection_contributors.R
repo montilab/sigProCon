@@ -36,6 +36,7 @@ signature_projection_contributors <- function(
 ) {
   ## BEGIN input checks
   cor_method = match.arg(cor_method)
+  stopifnot( methods::is(signature, "list") )
   stopifnot( methods::is(eset, "SummarizedExperiment") || methods::is(eset, "ExpressionSet") )
   stopifnot( is.null(sig_score) || length(sig_score)==ncol(eset) )
   stopifnot( is.null(sig_score) || isTRUE(all.equal(names(sig_score), Biobase::sampleNames(eset))) )

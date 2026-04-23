@@ -6,3 +6,5 @@
 ^README\.Rmd$
 ^data-raw$
 ^sigProCon\.Rcheck$
+^\.positai$
+^\.claude$

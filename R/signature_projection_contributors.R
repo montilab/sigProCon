@@ -34,8 +34,8 @@ signature_projection_contributors <- function(
     method = c("GSVA", "eigengene", "pc"),
     name = "expression",
     gsea = FALSE,
-    make_heatmap_all = TRUE,
-    make_heatmap_sig = TRUE,
+    make_heatmap_all = FALSE,
+    make_heatmap_sig = FALSE,
     ...
 ) {
   ## BEGIN input checks

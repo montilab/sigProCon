@@ -4,7 +4,7 @@
 #'
 #' @return A ggplot object
 #'
-#' @importFrom ggplot2 qplot geom_rug ggplot geom_hline geom_vline annotate theme theme_void element_text element_line element_rect element_blank
+#' @importFrom ggplot2 aes annotate element_blank element_line element_rect element_text geom_hline geom_line geom_rug geom_vline ggplot theme theme_void
 #'
 .ggempty <- function() {
   ggplot2::ggplot() +
@@ -23,19 +23,22 @@
 #'
 .ggeplot <- function(n, positions, x_axis, y_axis, title = "") {
   score <- which.max(abs(y_axis))
-  ggplot2::qplot(x_axis,
-    y_axis,
-    main = title,
-    ylab = "Running Enrichment Score",
-    xlab = "Position in Ranked List of Genes",
-    geom = "line"
+  ggplot2::ggplot(
+    data = data.frame(x_axis = x_axis, y_axis = y_axis),
+    mapping = ggplot2::aes(x = x_axis, y = y_axis)
   ) +
+    ggplot2::geom_line() +
     ggplot2::geom_rug(data = data.frame(positions), ggplot2::aes(x = positions), inherit.aes = FALSE) +
     ggplot2::geom_hline(yintercept = 0) +
     ggplot2::geom_vline(xintercept = n / 2, linetype = "dotted") +
     ggplot2::annotate("point", x = x_axis[score], y = y_axis[score], color = "red") +
     ggplot2::annotate("text", x = x_axis[score] + n / 20, y = y_axis[score], label = round(y_axis[score], 2)) +
     ggplot2::annotate("point", x = x_axis[score], y = y_axis[score], color = "red") +
+    ggplot2::labs(
+      title = title,
+      x = "Position in Ranked List of Genes",
+      y = "Running Enrichment Score"
+    ) +
     ggplot2::theme(
       plot.title = ggplot2::element_text(hjust = 0.5),
       panel.background = ggplot2::element_blank(),
@@ -140,7 +143,7 @@
   # Enrichment plot
   p <- if (plotting) {
     .ggeplot(n.x, y, x.axis, y.axis, plot.title) +
-      geom_vline(xintercept = leading_edge, linetype = "dotted", color = "red", size = 0.25)
+      ggplot2::geom_vline(xintercept = leading_edge, linetype = "dotted", color = "red", linewidth = 0.25)
   } else {
     .ggempty()
   }
@@ -154,4 +157,3 @@
     plot = p
   ))
 }
-

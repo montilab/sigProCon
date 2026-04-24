@@ -10,6 +10,10 @@ spc_heatmap_sig(
   col_ha = NULL,
   min_sigsize = 3,
   name = "expression",
+  row_title = "Signature Genes",
+  show_row_names = TRUE,
+  show_column_names = FALSE,
+  row_names_side = "left",
   ...
 )
 }
@@ -23,6 +27,14 @@ spc_heatmap_sig(
 \item{min_sigsize}{minimum number of signature genes required to plot signature-only heatmap}
 
 \item{name}{name for the heatmap}
+
+\item{row_title}{row title passed to \code{ComplexHeatmap::Heatmap}}
+
+\item{show_row_names}{logical, whether to show row names}
+
+\item{show_column_names}{logical, whether to show column names}
+
+\item{row_names_side}{side for row names (\code{"left"} or \code{"right"})}
 
 \item{...}{additional parameters to pass to \code{ComplexHeatmap::Heatmap}}
 }

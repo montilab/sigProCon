@@ -139,3 +139,31 @@ test_that("spc_heatmap_* can be called from signature_projection_contributors ou
   expect_true(any(inherits(hm_all, c("Heatmap", "HeatmapList"))))
   expect_true(any(inherits(hm_sig, c("Heatmap", "HeatmapList"))))
 })
+
+test_that("spc_heatmap_* support additional Heatmap arguments", {
+  eset <- build_test_eset(n_genes = 40, n_samples = 10)
+  signature <- list(sig1 = sample(rownames(eset), 12, replace = FALSE))
+
+  result <- sigProCon::signature_projection_contributors(
+    eset = eset,
+    signature = signature,
+    make_heatmap_all = FALSE,
+    make_heatmap_sig = FALSE
+  )
+
+  hm_all <- sigProCon::spc_heatmap_all(
+    eset = eset,
+    spc_out = result,
+    row_names_side = "right",
+    show_column_names = TRUE
+  )
+  hm_sig <- sigProCon::spc_heatmap_sig(
+    eset = eset,
+    spc_out = result,
+    row_names_side = "right",
+    show_column_names = TRUE
+  )
+
+  expect_true(any(inherits(hm_all, c("Heatmap", "HeatmapList"))))
+  expect_true(any(inherits(hm_sig, c("Heatmap", "HeatmapList"))))
+})

@@ -7,6 +7,10 @@
 #' @param spc_out output list from \code{signature_projection_contributors()}
 #' @param col_ha a ComplexHeatmap::heatmapAnnotation object with columns' (i.e., samples') annotation
 #' @param name name for the heatmap
+#' @param row_title row title passed to \code{ComplexHeatmap::Heatmap}
+#' @param show_row_names logical, whether to show row names
+#' @param show_column_names logical, whether to show column names
+#' @param row_names_side side for row names (\code{"left"} or \code{"right"})
 #' @param ... additional parameters to pass to ComplexHeatmap::Heatmap
 #'
 #' @return a ComplexHeatmap object
@@ -23,6 +27,11 @@ spc_heatmap_all <- function(
     spc_out,
     col_ha = NULL,
     name = "expression",
+    ## ComplexHeatmap::Heatmap arguments
+    row_title = "Genes",
+    show_row_names = FALSE,
+    show_column_names = FALSE,
+    row_names_side = "left",
     ...
 ) {
   prep <- .spc_prepare_heatmap_data(eset = eset, spc_out = spc_out, col_ha = col_ha)
@@ -37,7 +46,6 @@ spc_heatmap_all <- function(
     ),
     show_annotation_name = FALSE
   )
-
   suppressMessages(ComplexHeatmap::Heatmap(
     matrix = t(scale(t(Biobase::exprs(prep$eset_srt)))),
     top_annotation = prep$col_ha_srt,
@@ -45,9 +53,10 @@ spc_heatmap_all <- function(
     cluster_rows = FALSE,
     cluster_columns = FALSE,
     cluster_column_slices = FALSE,
-    row_title = "Genes",
-    show_row_names = FALSE,
-    show_column_names = FALSE,
+    row_title = row_title,
+    show_row_names = show_row_names,
+    show_column_names = show_column_names,
+    row_names_side = row_names_side,
     column_names_gp = grid::gpar(fontsize = 8),
     ...
   )) + row_ha
@@ -63,6 +72,10 @@ spc_heatmap_all <- function(
 #' @param col_ha a ComplexHeatmap::heatmapAnnotation object with columns' (i.e., samples') annotation
 #' @param min_sigsize minimum number of signature genes required to plot signature-only heatmap
 #' @param name name for the heatmap
+#' @param row_title row title passed to \code{ComplexHeatmap::Heatmap}
+#' @param show_row_names logical, whether to show row names
+#' @param show_column_names logical, whether to show column names
+#' @param row_names_side side for row names (\code{"left"} or \code{"right"})
 #' @param ... additional parameters to pass to ComplexHeatmap::Heatmap
 #'
 #' @return a ComplexHeatmap object
@@ -80,6 +93,11 @@ spc_heatmap_sig <- function(
     col_ha = NULL,
     min_sigsize = 3,
     name = "expression",
+    ## ComplexHeatmap::Heatmap arguments
+    row_title = "Signature Genes",
+    show_row_names = TRUE,
+    show_column_names = FALSE,
+    row_names_side = "left",
     ...
 ) {
   prep <- .spc_prepare_heatmap_data(eset = eset, spc_out = spc_out, col_ha = col_ha)
@@ -95,12 +113,13 @@ spc_heatmap_sig <- function(
     cluster_rows = FALSE,
     cluster_columns = FALSE,
     cluster_column_slices = FALSE,
-    row_title = "Signature Genes",
+    row_title = row_title,
     row_title_gp = grid::gpar(fontsize = 12, fontface = "bold"),
     row_names_gp = grid::gpar(fontsize = 8),
     column_names_gp = grid::gpar(fontsize = 8),
-    show_row_names = TRUE,
-    row_names_side = "left",
+    show_row_names = show_row_names,
+    show_column_names = show_column_names,
+    row_names_side = row_names_side,
     ...
   )) + ComplexHeatmap::rowAnnotation(
     correlation = ComplexHeatmap::anno_barplot(score_cor_sig)

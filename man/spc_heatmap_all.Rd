@@ -4,7 +4,17 @@
 \alias{spc_heatmap_all}
 \title{Generate All-Genes SPC Heatmap}
 \usage{
-spc_heatmap_all(eset, spc_out, col_ha = NULL, name = "expression", ...)
+spc_heatmap_all(
+  eset,
+  spc_out,
+  col_ha = NULL,
+  name = "expression",
+  row_title = "Genes",
+  show_row_names = FALSE,
+  show_column_names = FALSE,
+  row_names_side = "left",
+  ...
+)
 }
 \arguments{
 \item{eset}{an expression set}
@@ -14,6 +24,14 @@ spc_heatmap_all(eset, spc_out, col_ha = NULL, name = "expression", ...)
 \item{col_ha}{a ComplexHeatmap::heatmapAnnotation object with columns' (i.e., samples') annotation}
 
 \item{name}{name for the heatmap}
+
+\item{row_title}{row title passed to \code{ComplexHeatmap::Heatmap}}
+
+\item{show_row_names}{logical, whether to show row names}
+
+\item{show_column_names}{logical, whether to show column names}
+
+\item{row_names_side}{side for row names (\code{"left"} or \code{"right"})}
 
 \item{...}{additional parameters to pass to \code{ComplexHeatmap::Heatmap}}
 }

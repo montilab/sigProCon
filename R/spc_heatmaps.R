@@ -32,6 +32,7 @@ spc_heatmap_all <- function(
     show_row_names = FALSE,
     show_column_names = FALSE,
     row_names_side = "left",
+    fontsize = 8,
     ...
 ) {
   prep <- .spc_prepare_heatmap_data(eset = eset, spc_out = spc_out, col_ha = col_ha)
@@ -57,7 +58,7 @@ spc_heatmap_all <- function(
     show_row_names = show_row_names,
     show_column_names = show_column_names,
     row_names_side = row_names_side,
-    column_names_gp = grid::gpar(fontsize = 8),
+    column_names_gp = grid::gpar(fontsize = fontsize),
     ...
   )) + row_ha
 }
@@ -98,6 +99,7 @@ spc_heatmap_sig <- function(
     show_row_names = TRUE,
     show_column_names = FALSE,
     row_names_side = "left",
+    fontsize = 8,
     ...
 ) {
   prep <- .spc_prepare_heatmap_data(eset = eset, spc_out = spc_out, col_ha = col_ha)
@@ -114,9 +116,9 @@ spc_heatmap_sig <- function(
     cluster_columns = FALSE,
     cluster_column_slices = FALSE,
     row_title = row_title,
-    row_title_gp = grid::gpar(fontsize = 12, fontface = "bold"),
-    row_names_gp = grid::gpar(fontsize = 8),
-    column_names_gp = grid::gpar(fontsize = 8),
+    row_title_gp = grid::gpar(fontsize = fontsize*1.5, fontface = "bold"),
+    row_names_gp = grid::gpar(fontsize = fontsize),
+    column_names_gp = grid::gpar(fontsize = fontsize),
     show_row_names = show_row_names,
     show_column_names = show_column_names,
     row_names_side = row_names_side,

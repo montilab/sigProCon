@@ -9,7 +9,9 @@
 #' @param method how to compute the aggregate score (`"GSVA"`, `"eigengene"`, or `"pc"`)
 #' @param name name for the heatmap
 #' @param gsea logical, whether to use weighted KS statistic
-#' @param ... additional parameters to pass to the method
+#' @param make_heatmap_all logical, whether to generate all-genes heatmap
+#' @param make_heatmap_sig logical, whether to generate signature-only heatmap
+#' @param ... additional parameters to pass to ComplexHeatmap::Heatmap
 #'
 #' @return a list of a dataframe and two heatmaps
 #'
@@ -32,6 +34,8 @@ signature_projection_contributors <- function(
     method = c("GSVA", "eigengene", "pc"),
     name = "expression",
     gsea = FALSE,
+    make_heatmap_all = TRUE,
+    make_heatmap_sig = TRUE,
     ...
 ) {
   ## BEGIN input checks
@@ -68,9 +72,7 @@ signature_projection_contributors <- function(
     ifelse(Biobase::featureNames(eset) %in% signature[[1]], 'signature', 'background'),
     levels = c("signature","background")
   )
-  ## PLOTS
-
-  ## 1) with all genes
+  ## prepare sorted object and enrichment output for downstream plotting
   eset_srt <- eset[
     order(Biobase::fData(eset)$score_cor, decreasing = TRUE), # high to low correlation
     order(eset$sig_score, decreasing = TRUE)                  # high to low sig score
@@ -97,61 +99,37 @@ signature_projection_contributors <- function(
       factor(ifelse(Biobase::featureNames(eset_srt) %in% ks_out$hits, "yes", "no"),
              levels = c("yes", "no"))
   }
-  if ( is.null(col_ha)) {
-    ## the only column annotation will be the sig_score barplot
-    col_ha <- ComplexHeatmap::HeatmapAnnotation(
-      sig_score = ComplexHeatmap::anno_barplot(eset_srt$sig_score))
-  } else {
-    ## augment input column annotation with sig_score barplot
-    col_ha <- c(
-      ComplexHeatmap::HeatmapAnnotation(
-        sig_score = ComplexHeatmap::anno_barplot(eset_srt$sig_score)),
-      ## next command is not a robust solution, but couldn't find a better way
-      col_ha[match(Biobase::sampleNames(eset_srt), Biobase::sampleNames(eset)),])
-  }
-  row_ha <- ComplexHeatmap::rowAnnotation(
-    genes = Biobase::fData(eset_srt)$insig,
-    leadedge = ifelse(Biobase::featureNames(eset_srt) %in% ks_out$hits, "yes", "no"),
-    correlation = ComplexHeatmap::anno_barplot(Biobase::fData(eset_srt)$score_cor),
-    col = list(genes = c("background" = "brown", "signature" = "lightgreen"),
-               leadedge = c(yes = "black", no = "white")),
-    show_annotation_name = FALSE
-  )
-  full_heatmap <- suppressMessages(ComplexHeatmap::Heatmap(
-    matrix = t(scale(t(exprs(eset_srt)))),
-    top_annotation = col_ha,
-    cluster_rows = FALSE,
-    cluster_columns = FALSE,
-    cluster_column_slices = FALSE,
-    row_title = "Genes",
-    show_row_names = FALSE,
-    column_names_gp = grid::gpar(fontsize = 8),
-    ... )) +
-    row_ha
-
-  ## 2) with only signature genes
-  eset_flt <- eset_srt[Biobase::featureNames(eset_srt) %in% signature[[1]],]
-  stopifnot( nrow(eset_flt) > max(min_sigsize, max(lengths(signature)) * .25) )
-
-  sig_heatmap <- suppressMessages(ComplexHeatmap::Heatmap(
-    matrix = t(scale(t(Biobase::exprs(eset_flt)))),
-    top_annotation = col_ha,
-    cluster_rows = FALSE,
-    cluster_columns = FALSE,
-    cluster_column_slices = FALSE,
-    row_title = "Signature Genes",
-    row_title_gp = grid::gpar(fontsize = 12, fontface = "bold"),
-    row_names_gp = grid::gpar(fontsize = 8),
-    column_names_gp = grid::gpar(fontsize = 8),
-    show_row_names = TRUE,
-    row_names_side = "left",
-    ... )) +
-    ComplexHeatmap::rowAnnotation(
-      correlation = ComplexHeatmap::anno_barplot(Biobase::fData(eset_flt)$score_cor))
-
-  return(list(
+  spc_out <- list(
     score_cor = Biobase::fData(eset_srt)[, c("score_cor", "pval_cor", "insig", "leading_edge"), drop = FALSE],
     sig_score = Biobase::pData(eset_srt)[, "sig_score", drop = FALSE],
+    ks = ks_out
+  )
+
+  full_heatmap <- NULL
+  sig_heatmap <- NULL
+  if (isTRUE(make_heatmap_all)) {
+    full_heatmap <- spc_heatmap_all(
+      eset = eset,
+      spc_out = spc_out,
+      col_ha = col_ha,
+      name = name,
+      ...
+    )
+  }
+  if (isTRUE(make_heatmap_sig)) {
+    sig_heatmap <- spc_heatmap_sig(
+      eset = eset,
+      spc_out = spc_out,
+      col_ha = col_ha,
+      min_sigsize = min_sigsize,
+      name = name,
+      ...
+    )
+  }
+
+  return(list(
+    score_cor = spc_out$score_cor,
+    sig_score = spc_out$sig_score,
     heatmap_all_genes = full_heatmap,
     heatmap_sig_genes = sig_heatmap,
     ks = ks_out

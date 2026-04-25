@@ -2,8 +2,8 @@ Package: sigProCon
 Type: Package
 Title: Evaluate Genes Driving Signature Scores in ExpressionSet
 Version: 0.1.0.9000
-Author: Lina Kroehling
-Maintainer: Lina Kroehling <lkroeh@bu.edu>
+Author: Stefano Monti, Lina Kroehling
+Maintainer: Stefano Monti <smonti@bu.edu>
 Description: Given a signature and ExpressionSet, this tool computes a per-sample
     signature score using GSVA or eigengene-based scoring.
     The main purpose of this tool is to interrogate which genes are contributing most

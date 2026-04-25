@@ -14,6 +14,8 @@ signature_projection_contributors(
   method = c("GSVA", "eigengene", "pc"),
   name = "expression",
   gsea = FALSE,
+  make_heatmap_all = TRUE,
+  make_heatmap_sig = TRUE,
   ...
 )
 }
@@ -36,7 +38,11 @@ signature_projection_contributors(
 
 \item{gsea}{logical, whether to use weighted KS statistic}
 
-\item{...}{additional parameters to pass to the method}
+\item{make_heatmap_all}{logical, whether to generate all-genes heatmap}
+
+\item{make_heatmap_sig}{logical, whether to generate signature-only heatmap}
+
+\item{...}{additional parameters to pass to \code{ComplexHeatmap::Heatmap}}
 }
 \value{
 a list of a dataframe and two heatmaps

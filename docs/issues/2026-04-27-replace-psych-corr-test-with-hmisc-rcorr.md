@@ -1,5 +1,8 @@
 # Issue: Replace `psych::corr.test` with `Hmisc::rcorr`
 
+> Status: superseded on April 27, 2026. The implementation was reverted to
+> `psych::corr.test` to avoid unnecessary all-pairs correlation work in `rcorr`.
+
 ## Summary
 Switch the gene-wise correlation and p-value computation in
 `signature_projection_contributors()` from `psych::corr.test` to `Hmisc::rcorr`.

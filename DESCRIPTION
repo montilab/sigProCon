@@ -24,7 +24,7 @@ Imports:
     tibble,
     grid,
     ggplot2,
-    Hmisc,
+    psych,
     matrixStats
 Suggests: 
     rmarkdown,

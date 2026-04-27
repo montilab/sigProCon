@@ -3,7 +3,7 @@
 #' @param eset an expression set
 #' @param signature a list of signatures (at least 1)
 #' @param sig_score an aggregate signature score
-#' @param cor_method correlation method used by \code{Hmisc::rcorr}
+#' @param cor_method correlation method used by \code{psych::corr.test}
 #' @param col_ha a ComplexHeatmap::heatmapAnnotation object with columns' (i.e., samples') annotation
 #' @param min_sigsize minimum number of signature genes required to plot signature-only heatmap
 #' @param method how to compute the aggregate score (`"GSVA"`, `"eigengene"`, or `"pc"`)
@@ -21,7 +21,7 @@
 #' @importFrom stats cor
 #' @importFrom methods is
 #' @importFrom grid gpar
-#' @importFrom Hmisc rcorr
+#' @importFrom psych corr.test
 #'
 #' @export
 signature_projection_contributors <- function(
@@ -63,14 +63,11 @@ signature_projection_contributors <- function(
   stopifnot( all(!is.na(eset$sig_score)) )
 
   ## add correlation (and p-value) of each gene with signature score to fData
-  corr_input <- cbind(sig_score = eset$sig_score, t(Biobase::exprs(eset)))
-  COR <- Hmisc::rcorr(corr_input, type = cor_method)
-  score_cor <- COR$r["sig_score", Biobase::featureNames(eset)]
-  pval_cor <- COR$P["sig_score", Biobase::featureNames(eset)]
-  stopifnot(length(score_cor) == nrow(eset))
-  stopifnot(length(pval_cor) == nrow(eset))
-  Biobase::fData(eset)$score_cor <- unname(score_cor)
-  Biobase::fData(eset)$pval_cor <- unname(pval_cor)
+  COR <- psych::corr.test(eset$sig_score, t(Biobase::exprs(eset)), method = cor_method)
+  stopifnot(nrow(COR$r) == 1)
+  stopifnot(nrow(COR$p) == 1)
+  Biobase::fData(eset)$score_cor <- drop(COR$r)
+  Biobase::fData(eset)$pval_cor <- drop(COR$p)
   Biobase::fData(eset)$insig <- factor(
     ifelse(Biobase::featureNames(eset) %in% signature[[1]], 'signature', 'background'),
     levels = c("signature","background")

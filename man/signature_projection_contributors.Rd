@@ -26,7 +26,7 @@ signature_projection_contributors(
 
 \item{sig_score}{an aggregate signature score}
 
-\item{cor_method}{correlation method used by \code{Hmisc::rcorr}}
+\item{cor_method}{correlation method used by \code{psych::corr.test}}
 
 \item{col_ha}{a ComplexHeatmap::heatmapAnnotation object with columns' (i.e., samples') annotation}
 

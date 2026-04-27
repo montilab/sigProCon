@@ -7,6 +7,8 @@
 #' @param spc_out output list from \code{signature_projection_contributors()}
 #' @param col_ha a ComplexHeatmap::heatmapAnnotation object with columns' (i.e., samples') annotation
 #' @param name name for the heatmap
+#' @param subsample optional integer number of top-variable features to retain by MAD;
+#'   heatmap rows are reduced to the union of these features and signature features
 #' @param row_title row title passed to \code{ComplexHeatmap::Heatmap}
 #' @param show_row_names logical, whether to show row names
 #' @param show_column_names logical, whether to show column names
@@ -27,6 +29,7 @@ spc_heatmap_all <- function(
     spc_out,
     col_ha = NULL,
     name = "expression",
+    subsample = NULL,
     ## ComplexHeatmap::Heatmap arguments
     row_title = "Genes",
     show_row_names = FALSE,
@@ -35,7 +38,7 @@ spc_heatmap_all <- function(
     fontsize = 8,
     ...
 ) {
-  prep <- .spc_prepare_heatmap_data(eset = eset, spc_out = spc_out, col_ha = col_ha)
+  prep <- .spc_prepare_heatmap_data(eset = eset, spc_out = spc_out, col_ha = col_ha, subsample = subsample)
 
   row_ha <- ComplexHeatmap::rowAnnotation(
     genes = prep$score_cor$insig,
@@ -128,7 +131,7 @@ spc_heatmap_sig <- function(
   )
 }
 
-.spc_prepare_heatmap_data <- function(eset, spc_out, col_ha = NULL) {
+.spc_prepare_heatmap_data <- function(eset, spc_out, col_ha = NULL, subsample = NULL) {
   stopifnot(methods::is(spc_out, "list"))
   stopifnot(all(c("score_cor", "sig_score") %in% names(spc_out)))
   stopifnot(methods::is(eset, "SummarizedExperiment") || methods::is(eset, "ExpressionSet"))
@@ -151,6 +154,18 @@ spc_heatmap_sig <- function(
   stopifnot(all(rownames(sig_score) %in% Biobase::sampleNames(eset)))
 
   row_ord <- rownames(score_cor)
+  if (!is.null(subsample)) {
+    stopifnot(is.numeric(subsample), length(subsample) == 1L, !is.na(subsample))
+    stopifnot(as.integer(subsample) == subsample)
+    stopifnot(subsample > 0L, subsample < nrow(eset))
+
+    expr_mat <- Biobase::exprs(eset)
+    mad_values <- matrixStats::rowMads(expr_mat, na.rm = TRUE)
+    top_mad_genes <- names(sort(mad_values, decreasing = TRUE))[seq_len(subsample)]
+    signature_genes <- rownames(score_cor)[score_cor$insig == "signature"]
+    keep_genes <- union(top_mad_genes, signature_genes)
+    row_ord <- row_ord[row_ord %in% keep_genes]
+  }
   col_ord <- rownames(sig_score)
   eset_srt <- eset[row_ord, col_ord]
 

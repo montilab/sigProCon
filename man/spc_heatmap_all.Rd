@@ -9,10 +9,12 @@ spc_heatmap_all(
   spc_out,
   col_ha = NULL,
   name = "expression",
+  subsample = NULL,
   row_title = "Genes",
   show_row_names = FALSE,
   show_column_names = FALSE,
   row_names_side = "left",
+  fontsize = 8,
   ...
 )
 }
@@ -25,6 +27,9 @@ spc_heatmap_all(
 
 \item{name}{name for the heatmap}
 
+\item{subsample}{optional integer number of top-variable features to retain by MAD;
+heatmap rows are reduced to the union of these features and signature features}
+
 \item{row_title}{row title passed to \code{ComplexHeatmap::Heatmap}}
 
 \item{show_row_names}{logical, whether to show row names}
@@ -32,6 +37,8 @@ spc_heatmap_all(
 \item{show_column_names}{logical, whether to show column names}
 
 \item{row_names_side}{side for row names (\code{"left"} or \code{"right"})}
+
+\item{fontsize}{fontsize for column labels}
 
 \item{...}{additional parameters to pass to \code{ComplexHeatmap::Heatmap}}
 }

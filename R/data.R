@@ -14,14 +14,6 @@
 #' @usage data(signature)
 "signature"
 
-#' Example Signatures
-#'
-#' Example collection of gene signatures.
-#'
-#' @format A named list of character vectors, one per signature.
-#' @usage data(signatures)
-"signatures"
-
 #' Toy ExpressionSet
 #'
 #' Small toy expression matrix packaged as an \code{ExpressionSet}.

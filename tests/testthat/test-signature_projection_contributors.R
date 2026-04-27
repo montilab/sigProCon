@@ -62,7 +62,12 @@ test_that("sig_score length matches ncol(eset)", {
 test_that("signature_projection_contributors returns correct output structure", {
   eset <- build_test_eset(n_genes = 40, n_samples = 10)
   signature <- list(sig1 = sample(rownames(eset), 12, replace = FALSE))
-  result <- sigProCon::signature_projection_contributors(eset, signature)
+  result <- sigProCon::signature_projection_contributors(
+    eset = eset,
+    signature = signature,
+    make_heatmap_all = TRUE,
+    make_heatmap_sig = TRUE
+  )
 
   expect_type(result, "list")
   expect_true(all(c("score_cor", "sig_score", "heatmap_all_genes", "heatmap_sig_genes", "ks") %in% names(result)))
@@ -114,6 +119,7 @@ test_that("signature_projection_contributors can skip heatmap generation", {
   result <- sigProCon::signature_projection_contributors(
     eset = eset,
     signature = signature,
+    sig_score = setNames(runif(ncol(eset)), sampleNames(eset)),
     make_heatmap_all = FALSE,
     make_heatmap_sig = FALSE
   )
@@ -129,6 +135,7 @@ test_that("spc_heatmap_* can be called from signature_projection_contributors ou
   result <- sigProCon::signature_projection_contributors(
     eset = eset,
     signature = signature,
+    sig_score = setNames(runif(ncol(eset)), sampleNames(eset)),
     make_heatmap_all = FALSE,
     make_heatmap_sig = FALSE
   )
@@ -147,6 +154,7 @@ test_that("spc_heatmap_* support additional Heatmap arguments", {
   result <- sigProCon::signature_projection_contributors(
     eset = eset,
     signature = signature,
+    sig_score = setNames(runif(ncol(eset)), sampleNames(eset)),
     make_heatmap_all = FALSE,
     make_heatmap_sig = FALSE
   )
@@ -189,6 +197,7 @@ test_that("spc_heatmap_all subsample keeps top MAD genes plus signature genes", 
   result <- sigProCon::signature_projection_contributors(
     eset = eset,
     signature = signature,
+    sig_score = setNames(runif(ncol(eset)), sampleNames(eset)),
     make_heatmap_all = FALSE,
     make_heatmap_sig = FALSE
   )

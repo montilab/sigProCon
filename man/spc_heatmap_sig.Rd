@@ -14,6 +14,7 @@ spc_heatmap_sig(
   show_row_names = TRUE,
   show_column_names = FALSE,
   row_names_side = "left",
+  fontsize = 8,
   ...
 )
 }
@@ -35,6 +36,8 @@ spc_heatmap_sig(
 \item{show_column_names}{logical, whether to show column names}
 
 \item{row_names_side}{side for row names (\code{"left"} or \code{"right"})}
+
+\item{fontsize}{fontsize for row and column labels}
 
 \item{...}{additional parameters to pass to \code{ComplexHeatmap::Heatmap}}
 }

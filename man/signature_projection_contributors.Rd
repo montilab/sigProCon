@@ -14,6 +14,7 @@ signature_projection_contributors(
   method = c("GSVA", "eigengene", "pc"),
   name = "expression",
   gsea = FALSE,
+  subsample = NULL,
   make_heatmap_all = FALSE,
   make_heatmap_sig = FALSE,
   ...
@@ -37,6 +38,9 @@ signature_projection_contributors(
 \item{name}{name for the heatmap}
 
 \item{gsea}{logical, whether to use weighted KS statistic}
+
+\item{subsample}{optional integer number of top-variable features (MAD-based)
+passed to \code{spc_heatmap_all()} when \code{make_heatmap_all = TRUE}}
 
 \item{make_heatmap_all}{logical, whether to generate all-genes heatmap}
 

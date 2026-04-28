@@ -213,3 +213,19 @@ test_that("spc_heatmap_all subsample keeps top MAD genes plus signature genes", 
   expect_true(length(selected_genes) >= 2)
   expect_true(length(selected_genes) <= 3)
 })
+
+test_that("signature_projection_contributors passes subsample to all-genes heatmap", {
+  eset <- build_test_eset(n_genes = 60, n_samples = 10)
+  signature <- list(sig1 = sample(rownames(eset), 12, replace = FALSE))
+
+  result <- sigProCon::signature_projection_contributors(
+    eset = eset,
+    signature = signature,
+    sig_score = setNames(runif(ncol(eset)), sampleNames(eset)),
+    make_heatmap_all = TRUE,
+    make_heatmap_sig = FALSE,
+    subsample = 20
+  )
+
+  expect_true(any(inherits(result$heatmap_all_genes, c("Heatmap", "HeatmapList"))))
+})

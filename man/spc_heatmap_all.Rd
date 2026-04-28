@@ -10,6 +10,8 @@ spc_heatmap_all(
   col_ha = NULL,
   name = "expression",
   subsample = NULL,
+  leadedge_label_n = 0,
+  leadedge_label_side = "right",
   row_title = "Genes",
   show_row_names = FALSE,
   show_column_names = FALSE,
@@ -29,6 +31,11 @@ spc_heatmap_all(
 
 \item{subsample}{optional integer number of top-variable features to retain by MAD;
 heatmap rows are reduced to the union of these features and signature features}
+
+\item{leadedge_label_n}{optional integer number of top leading-edge genes to label;
+use 0 to disable labels}
+
+\item{leadedge_label_side}{side for leading-edge labels (\code{"left"} or \code{"right"})}
 
 \item{row_title}{row title passed to \code{ComplexHeatmap::Heatmap}}
 

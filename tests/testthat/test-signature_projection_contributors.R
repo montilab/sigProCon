@@ -62,7 +62,12 @@ test_that("sig_score length matches ncol(eset)", {
 test_that("signature_projection_contributors returns correct output structure", {
   eset <- build_test_eset(n_genes = 40, n_samples = 10)
   signature <- list(sig1 = sample(rownames(eset), 12, replace = FALSE))
-  result <- sigProCon::signature_projection_contributors(eset, signature)
+  result <- sigProCon::signature_projection_contributors(
+    eset = eset,
+    signature = signature,
+    make_heatmap_all = TRUE,
+    make_heatmap_sig = TRUE
+  )
 
   expect_type(result, "list")
   expect_true(all(c("score_cor", "sig_score", "heatmap_all_genes", "heatmap_sig_genes", "ks") %in% names(result)))
@@ -114,6 +119,7 @@ test_that("signature_projection_contributors can skip heatmap generation", {
   result <- sigProCon::signature_projection_contributors(
     eset = eset,
     signature = signature,
+    sig_score = setNames(runif(ncol(eset)), sampleNames(eset)),
     make_heatmap_all = FALSE,
     make_heatmap_sig = FALSE
   )
@@ -129,6 +135,7 @@ test_that("spc_heatmap_* can be called from signature_projection_contributors ou
   result <- sigProCon::signature_projection_contributors(
     eset = eset,
     signature = signature,
+    sig_score = setNames(runif(ncol(eset)), sampleNames(eset)),
     make_heatmap_all = FALSE,
     make_heatmap_sig = FALSE
   )
@@ -147,6 +154,7 @@ test_that("spc_heatmap_* support additional Heatmap arguments", {
   result <- sigProCon::signature_projection_contributors(
     eset = eset,
     signature = signature,
+    sig_score = setNames(runif(ncol(eset)), sampleNames(eset)),
     make_heatmap_all = FALSE,
     make_heatmap_sig = FALSE
   )
@@ -166,4 +174,58 @@ test_that("spc_heatmap_* support additional Heatmap arguments", {
 
   expect_true(any(inherits(hm_all, c("Heatmap", "HeatmapList"))))
   expect_true(any(inherits(hm_sig, c("Heatmap", "HeatmapList"))))
+})
+
+test_that("spc_heatmap_all subsample keeps top MAD genes plus signature genes", {
+  set.seed(123)
+  mat <- matrix(
+    c(
+      rep(1, 8), # gene1: low MAD, in signature
+      1:8,       # gene2: high MAD
+      rep(c(0, 10), 4), # gene3: high MAD
+      c(1, 2, 1, 2, 1, 2, 1, 2), # gene4: moderate MAD
+      c(5, 5, 5, 5, 5, 5, 6, 6), # gene5: low MAD
+      c(2, 2, 3, 3, 4, 4, 5, 5)  # gene6: moderate MAD
+    ),
+    nrow = 6,
+    byrow = TRUE,
+    dimnames = list(paste0("gene", 1:6), paste0("sample", 1:8))
+  )
+  eset <- Biobase::ExpressionSet(mat)
+  signature <- list(sig1 = "gene1")
+
+  result <- sigProCon::signature_projection_contributors(
+    eset = eset,
+    signature = signature,
+    sig_score = setNames(runif(ncol(eset)), sampleNames(eset)),
+    make_heatmap_all = FALSE,
+    make_heatmap_sig = FALSE
+  )
+
+  prep <- sigProCon:::.spc_prepare_heatmap_data(
+    eset = eset,
+    spc_out = result,
+    subsample = 2
+  )
+
+  selected_genes <- rownames(Biobase::exprs(prep$eset_srt))
+  expect_true("gene1" %in% selected_genes)
+  expect_true(length(selected_genes) >= 2)
+  expect_true(length(selected_genes) <= 3)
+})
+
+test_that("signature_projection_contributors passes subsample to all-genes heatmap", {
+  eset <- build_test_eset(n_genes = 60, n_samples = 10)
+  signature <- list(sig1 = sample(rownames(eset), 12, replace = FALSE))
+
+  result <- sigProCon::signature_projection_contributors(
+    eset = eset,
+    signature = signature,
+    sig_score = setNames(runif(ncol(eset)), sampleNames(eset)),
+    make_heatmap_all = TRUE,
+    make_heatmap_sig = FALSE,
+    subsample = 20
+  )
+
+  expect_true(any(inherits(result$heatmap_all_genes, c("Heatmap", "HeatmapList"))))
 })

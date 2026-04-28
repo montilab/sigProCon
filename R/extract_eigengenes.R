@@ -1,8 +1,8 @@
 #####################################################
 ## EXTRACT EIGENGENES
 #####################################################
-## given an ExpressionSet and a list of "signatures" (sets of features), 
-## ..extract the eigengene (i.e., 1st PCA) from each module and 
+## given an ExpressionSet and a list of "signatures" (sets of features),
+## ..extract the eigengene (i.e., 1st PCA) from each module and
 ## ..return as an ExpressionSet
 ##
 #' Extract module eigengenes from an expression set
@@ -28,7 +28,7 @@ extract_eigengenes <- function(
     key = NULL,       # if NULL use featureNames, otherwise use fData(eset)[,key]
     min_size = 3,
     method = c("multiple", "single"),
-    name_cleanup = TRUE) 
+    name_cleanup = TRUE)
 {
   ## checks
   if (!requireNamespace("purrr", quietly = TRUE)) {
@@ -38,7 +38,7 @@ extract_eigengenes <- function(
     stop("package 'WGCNA' is required for extract_eigengenes()")
   }
   method <- match.arg(method)
-  if (class(eset) != "ExpressionSet") {
+  if (!methods::is(eset, "ExpressionSet")) {
     stop("ExpressionSet expected:", class(eset))
   }
   if (is.null(key) && length(intersect(Biobase::featureNames(eset), unique(unlist(signatures)))) < 1) {

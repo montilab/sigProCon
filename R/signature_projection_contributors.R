@@ -9,6 +9,8 @@
 #' @param method how to compute the aggregate score (`"GSVA"`, `"eigengene"`, or `"pc"`)
 #' @param name name for the heatmap
 #' @param gsea logical, whether to use weighted KS statistic
+#' @param subsample optional integer number of top-variable features (MAD-based)
+#'   passed to \code{spc_heatmap_all()} when \code{make_heatmap_all = TRUE}
 #' @param make_heatmap_all logical, whether to generate all-genes heatmap
 #' @param make_heatmap_sig logical, whether to generate signature-only heatmap
 #' @param ... additional parameters to pass to ComplexHeatmap::Heatmap
@@ -34,6 +36,7 @@ signature_projection_contributors <- function(
     method = c("GSVA", "eigengene", "pc"),
     name = "expression",
     gsea = FALSE,
+    subsample = NULL,
     make_heatmap_all = FALSE,
     make_heatmap_sig = FALSE,
     ...
@@ -63,9 +66,9 @@ signature_projection_contributors <- function(
   stopifnot( all(!is.na(eset$sig_score)) )
 
   ## add correlation (and p-value) of each gene with signature score to fData
-  COR <- psych::corr.test(eset$sig_score, t(exprs(eset)), method = cor_method)
-  stopifnot(nrow(COR$r)==1)
-  stopifnot(nrow(COR$p)==1)
+  COR <- psych::corr.test(eset$sig_score, t(Biobase::exprs(eset)), method = cor_method)
+  stopifnot(nrow(COR$r) == 1)
+  stopifnot(nrow(COR$p) == 1)
   Biobase::fData(eset)$score_cor <- drop(COR$r)
   Biobase::fData(eset)$pval_cor <- drop(COR$p)
   Biobase::fData(eset)$insig <- factor(
@@ -104,7 +107,6 @@ signature_projection_contributors <- function(
     sig_score = Biobase::pData(eset_srt)[, "sig_score", drop = FALSE],
     ks = ks_out
   )
-
   full_heatmap <- NULL
   sig_heatmap <- NULL
   if (isTRUE(make_heatmap_all)) {
@@ -113,6 +115,7 @@ signature_projection_contributors <- function(
       spc_out = spc_out,
       col_ha = col_ha,
       name = name,
+      subsample = subsample,
       ...
     )
   }
@@ -126,7 +129,6 @@ signature_projection_contributors <- function(
       ...
     )
   }
-
   return(list(
     score_cor = spc_out$score_cor,
     sig_score = spc_out$sig_score,

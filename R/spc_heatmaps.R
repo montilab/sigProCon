@@ -7,6 +7,11 @@
 #' @param spc_out output list from \code{signature_projection_contributors()}
 #' @param col_ha a ComplexHeatmap::heatmapAnnotation object with columns' (i.e., samples') annotation
 #' @param name name for the heatmap
+#' @param subsample optional integer number of top-variable features to retain by MAD;
+#'   heatmap rows are reduced to the union of these features and signature features
+#' @param leadedge_label_n optional integer number of top leading-edge genes to label;
+#'   use 0 to disable labels
+#' @param leadedge_label_side side for leading-edge labels (\code{"left"} or \code{"right"})
 #' @param row_title row title passed to \code{ComplexHeatmap::Heatmap}
 #' @param show_row_names logical, whether to show row names
 #' @param show_column_names logical, whether to show column names
@@ -16,10 +21,10 @@
 #' @return a ComplexHeatmap object
 #'
 #' @import Biobase
-#' @importFrom ComplexHeatmap Heatmap HeatmapAnnotation rowAnnotation anno_barplot
+#' @importFrom ComplexHeatmap Heatmap HeatmapAnnotation rowAnnotation anno_barplot anno_mark
 #' @importFrom SummarizedExperiment assay colData rowData
 #' @importFrom methods is
-#' @importFrom grid gpar
+#' @importFrom grid gpar unit
 #'
 #' @export
 spc_heatmap_all <- function(
@@ -27,6 +32,9 @@ spc_heatmap_all <- function(
     spc_out,
     col_ha = NULL,
     name = "expression",
+    subsample = NULL,
+    leadedge_label_n = 0,
+    leadedge_label_side = "right",
     ## ComplexHeatmap::Heatmap arguments
     row_title = "Genes",
     show_row_names = FALSE,
@@ -35,21 +43,29 @@ spc_heatmap_all <- function(
     fontsize = 8,
     ...
 ) {
-  prep <- .spc_prepare_heatmap_data(eset = eset, spc_out = spc_out, col_ha = col_ha)
+  prep <- .spc_prepare_heatmap_data(eset = eset, spc_out = spc_out, col_ha = col_ha, subsample = subsample)
+  stopifnot(is.numeric(leadedge_label_n), length(leadedge_label_n) == 1L, !is.na(leadedge_label_n))
+  stopifnot(as.integer(leadedge_label_n) == leadedge_label_n)
+  stopifnot(leadedge_label_n >= 0L)
+  stopifnot(leadedge_label_side %in% c("left", "right"))
 
-  row_ha <- ComplexHeatmap::rowAnnotation(
+  left_row_ha <- ComplexHeatmap::rowAnnotation(
+    correlation = ComplexHeatmap::anno_barplot(prep$score_cor$score_cor),
+    show_annotation_name = FALSE
+  )
+  right_row_ha <- ComplexHeatmap::rowAnnotation(
     genes = prep$score_cor$insig,
     leadedge = ifelse(rownames(prep$score_cor) %in% prep$ks_hits, "yes", "no"),
-    correlation = ComplexHeatmap::anno_barplot(prep$score_cor$score_cor),
     col = list(
       genes = c("background" = "brown", "signature" = "lightgreen"),
       leadedge = c(yes = "black", no = "white")
     ),
     show_annotation_name = FALSE
   )
-  suppressMessages(ComplexHeatmap::Heatmap(
+  hm <- suppressMessages(ComplexHeatmap::Heatmap(
     matrix = t(scale(t(Biobase::exprs(prep$eset_srt)))),
     top_annotation = prep$col_ha_srt,
+    left_annotation = left_row_ha,
     name = name,
     cluster_rows = FALSE,
     cluster_columns = FALSE,
@@ -60,7 +76,29 @@ spc_heatmap_all <- function(
     row_names_side = row_names_side,
     column_names_gp = grid::gpar(fontsize = fontsize),
     ...
-  )) + row_ha
+  )) + right_row_ha
+
+  if (leadedge_label_n > 0L && length(prep$ks_hits) > 0L) {
+    leadedge_genes <- intersect(prep$ks_hits, rownames(prep$score_cor))
+    if (length(leadedge_genes) > 0L) {
+      leadedge_score <- prep$score_cor[leadedge_genes, "score_cor", drop = TRUE]
+      top_idx <- order(abs(leadedge_score), decreasing = TRUE)[seq_len(min(leadedge_label_n, length(leadedge_genes)))]
+      leadedge_genes <- leadedge_genes[top_idx]
+      hm <- hm + ComplexHeatmap::rowAnnotation(
+        leadedge_labels = ComplexHeatmap::anno_mark(
+          at = match(leadedge_genes, rownames(prep$score_cor)),
+          labels = leadedge_genes,
+          side = leadedge_label_side,
+          labels_gp = grid::gpar(fontsize = fontsize),
+          link_width = grid::unit(4, "mm"),
+          extend = grid::unit(3, "mm")
+        ),
+        show_annotation_name = FALSE
+      )
+    }
+  }
+
+  hm
 }
 
 #' Generate Signature-Only SPC Heatmap
@@ -128,7 +166,7 @@ spc_heatmap_sig <- function(
   )
 }
 
-.spc_prepare_heatmap_data <- function(eset, spc_out, col_ha = NULL) {
+.spc_prepare_heatmap_data <- function(eset, spc_out, col_ha = NULL, subsample = NULL) {
   stopifnot(methods::is(spc_out, "list"))
   stopifnot(all(c("score_cor", "sig_score") %in% names(spc_out)))
   stopifnot(methods::is(eset, "SummarizedExperiment") || methods::is(eset, "ExpressionSet"))
@@ -151,6 +189,18 @@ spc_heatmap_sig <- function(
   stopifnot(all(rownames(sig_score) %in% Biobase::sampleNames(eset)))
 
   row_ord <- rownames(score_cor)
+  if (!is.null(subsample)) {
+    stopifnot(is.numeric(subsample), length(subsample) == 1L, !is.na(subsample))
+    stopifnot(as.integer(subsample) == subsample)
+    stopifnot(subsample > 0L, subsample < nrow(eset))
+
+    expr_mat <- Biobase::exprs(eset)
+    mad_values <- matrixStats::rowMads(expr_mat, na.rm = TRUE)
+    top_mad_genes <- names(sort(mad_values, decreasing = TRUE))[seq_len(subsample)]
+    signature_genes <- rownames(score_cor)[score_cor$insig == "signature"]
+    keep_genes <- union(top_mad_genes, signature_genes)
+    row_ord <- row_ord[row_ord %in% keep_genes]
+  }
   col_ord <- rownames(sig_score)
   eset_srt <- eset[row_ord, col_ord]
 

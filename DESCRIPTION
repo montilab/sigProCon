@@ -24,7 +24,8 @@ Imports:
     tibble,
     grid,
     ggplot2,
-    psych
+    psych,
+    matrixStats
 Suggests: 
     rmarkdown,
     knitr,

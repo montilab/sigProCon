@@ -50,8 +50,8 @@ spc_heatmap_all <- function(
   stopifnot(leadedge_label_side %in% c("left", "right"))
 
   left_row_ha <- ComplexHeatmap::rowAnnotation(
-    correlation = ComplexHeatmap::anno_barplot(prep$score_cor$score_cor),
-    show_annotation_name = FALSE
+    `gene correlation` = ComplexHeatmap::anno_barplot(prep$score_cor$score_cor),
+    show_annotation_name = TRUE
   )
   right_row_ha <- ComplexHeatmap::rowAnnotation(
     genes = prep$score_cor$insig,

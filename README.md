@@ -31,6 +31,16 @@ This package simply takes the correlation of each gene in the signature
 with the signature score, to identify the genes that are contributing
 most to the score.
 
+Notes on current defaults and options:
+
+- `signature_projection_contributors()` returns heatmaps only when
+  `make_heatmap_all = TRUE` and/or `make_heatmap_sig = TRUE`.
+- `subsample` can be passed to `signature_projection_contributors()` (or
+  directly to `spc_heatmap_all()`) to keep the union of top-MAD genes
+  and signature genes in the all-genes heatmap.
+- `spc_heatmap_all()` supports `leadedge_label_n` and
+  `leadedge_label_side` to label top leading-edge genes.
+
 ## Installation
 
 You can install the development version of sigProCon from
@@ -58,7 +68,9 @@ print(dim(toy_eset))
 ``` r
 toy_output <- sigProCon::signature_projection_contributors(
   eset = toy_eset,
-  signature = list(signature1 = toy_signature)
+  signature = list(signature1 = toy_signature),
+  make_heatmap_all = TRUE,
+  make_heatmap_sig = TRUE
 )
 
 ## Show some of the genes' correlation to the signature score
@@ -89,6 +101,20 @@ print(toy_output$heatmap_all_genes)
 ```
 
 <img src="man/figures/README-toy-full.heatmap-1.png" width="100%" />
+
+The all-genes heatmap now places the correlation barplot on the left and
+can annotate top leading-edge genes with offset labels:
+
+``` r
+toy_hm_all_custom <- sigProCon::spc_heatmap_all(
+  eset = toy_eset,
+  spc_out = toy_output,
+  subsample = 50,
+  leadedge_label_n = 8,
+  leadedge_label_side = "right"
+)
+print(toy_hm_all_custom)
+```
 
 ### View toy heatmap that plots only signature genes:
 
@@ -125,7 +151,9 @@ toy_score_eigengene <- sigProCon::omics_signature_score(
 toy_output_precomp <- sigProCon::signature_projection_contributors(
   eset = toy_eset,
   signature = list(signature1 = toy_signature),
-  sig_score = toy_score
+  sig_score = toy_score,
+  make_heatmap_all = TRUE,
+  make_heatmap_sig = TRUE
 )
 ## same results
 isTRUE(all.equal(toy_output$score_cor, toy_output_precomp$score_cor))
@@ -143,7 +171,9 @@ data(eset)
 
 output <- sigProCon::signature_projection_contributors(
   eset = eset, 
-  signature = signature)
+  signature = signature,
+  make_heatmap_all = TRUE,
+  make_heatmap_sig = TRUE)
 ```
 
 ### View tables:

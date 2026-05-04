@@ -160,11 +160,10 @@ The large number of genes in the dataset makes it difficult to clearly see the s
 sigProCon::spc_heatmap_all(
   eset = eset,
   spc_out = output,
-  subsample = 1000,
+  subsample = 3000,
   leadedge_label_n = 5
 )
 ```
-
 
 ### View KS plot of signature genes and scores:
 

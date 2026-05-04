@@ -212,7 +212,7 @@ correlated genes (using `leadedge_label_n`).
 sigProCon::spc_heatmap_all(
   eset = eset,
   spc_out = output,
-  subsample = 1000,
+  subsample = 3000,
   leadedge_label_n = 5
 )
 ```

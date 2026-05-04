@@ -31,16 +31,6 @@ This package simply takes the correlation of each gene in the signature
 with the signature score, to identify the genes that are contributing
 most to the score.
 
-Notes on current defaults and options:
-
-- `signature_projection_contributors()` returns heatmaps only when
-  `make_heatmap_all = TRUE` and/or `make_heatmap_sig = TRUE`.
-- `subsample` can be passed to `signature_projection_contributors()` (or
-  directly to `spc_heatmap_all()`) to keep the union of top-MAD genes
-  and signature genes in the all-genes heatmap.
-- `spc_heatmap_all()` supports `leadedge_label_n` and
-  `leadedge_label_side` to label top leading-edge genes.
-
 ## Installation
 
 You can install the development version of sigProCon from
@@ -68,11 +58,8 @@ print(dim(toy_eset))
 ``` r
 toy_output <- sigProCon::signature_projection_contributors(
   eset = toy_eset,
-  signature = list(signature1 = toy_signature),
-  make_heatmap_all = TRUE,
-  make_heatmap_sig = TRUE
+  signature = list(signature1 = toy_signature)
 )
-
 ## Show some of the genes' correlation to the signature score
 print(head(toy_output$score_cor))
 #>          score_cor     pval_cor     insig leading_edge
@@ -97,42 +84,37 @@ print(head(toy_output$sig_score))
 ### View toy heatmap that plots all signature and non-signature genes:
 
 ``` r
-print(toy_output$heatmap_all_genes)
-```
-
-<img src="man/figures/README-toy-full.heatmap-1.png" width="100%" />
-
-The all-genes heatmap now places the correlation barplot on the left and
-can annotate top leading-edge genes with offset labels:
-
-``` r
-toy_hm_all_custom <- sigProCon::spc_heatmap_all(
+## plot full heatmap
+sigProCon::spc_heatmap_all(
   eset = toy_eset,
-  spc_out = toy_output,
-  subsample = 50,
-  leadedge_label_n = 8,
-  leadedge_label_side = "right"
+  spc_out = toy_output
 )
-print(toy_hm_all_custom)
 ```
+
+<img src="man/figures/README-toy-full.heatmap-1.png" alt="" width="100%" />
 
 ### View toy heatmap that plots only signature genes:
 
 ``` r
-print(toy_output$heatmap_sig_genes)
+## plot signature heatmap
+sigProCon::spc_heatmap_sig(
+  eset = toy_eset,
+  spc_out = toy_output
+)
 ```
 
-<img src="man/figures/README-toy-sig.heatmap-1.png" width="100%" />
+<img src="man/figures/README-toy-sig.heatmap-1.png" alt="" width="100%" />
 
-### View toy k.s. plot of signature genes and scores:
+### View toy KS plot of signature genes and scores:
 
 ``` r
 print(toy_output$ks$plot)
 ```
 
-<img src="man/figures/README-toy-ksplot-1.png" width="100%" />
+<img src="man/figures/README-toy-ksplot-1.png" alt="" width="100%" />
 
-`omics_signature_score()` supports `"GSVA"`, `"eigengene"`, and `"pc"` methods.
+`omics_signature_score()` supports `"GSVA"`, `"eigengene"`, and `"pc"`
+methods.
 
 #### Passing a pre-computed score
 
@@ -151,9 +133,7 @@ toy_score_eigengene <- sigProCon::omics_signature_score(
 toy_output_precomp <- sigProCon::signature_projection_contributors(
   eset = toy_eset,
   signature = list(signature1 = toy_signature),
-  sig_score = toy_score,
-  make_heatmap_all = TRUE,
-  make_heatmap_sig = TRUE
+  sig_score = toy_score
 )
 ## same results
 isTRUE(all.equal(toy_output$score_cor, toy_output_precomp$score_cor))
@@ -171,9 +151,7 @@ data(eset)
 
 output <- sigProCon::signature_projection_contributors(
   eset = eset, 
-  signature = signature,
-  make_heatmap_all = TRUE,
-  make_heatmap_sig = TRUE)
+  signature = signature)
 ```
 
 ### View tables:
@@ -199,26 +177,52 @@ print(head(output$sig_score))
 #> Sample6  0.09226228
 ```
 
-### View heatmap that plots all signature and non-signature genes:
-
-``` r
-print(output$heatmap_all_genes)
-```
-
-<img src="man/figures/README-full.heatmap-1.png" width="100%" />
-
 ### View heatmap that plots only signature genes:
 
 ``` r
-print(output$heatmap_sig_genes)
+## plot signature heatmap
+sigProCon::spc_heatmap_sig(
+  eset = eset,
+  spc_out = output
+)
 ```
 
-<img src="man/figures/README-sig.heatmap-1.png" width="100%" />
+<img src="man/figures/README-sig.heatmap-1.png" alt="" width="100%" />
 
-### View k.s. plot of signature genes and scores:
+### View heatmap that plots all signature and non-signature genes:
+
+``` r
+## plot full heatmap
+sigProCon::spc_heatmap_all(
+  eset = eset,
+  spc_out = output
+)
+```
+
+<img src="man/figures/README-full.heatmap-1.png" alt="" width="100%" />
+
+The large number of genes in the dataset makes it difficult to clearly
+see the signature hits (*leadedge* on the right). We can subsample the
+number of genes to be displayed (to be the union of the top `subsample`
+genes by MAD and the signature genes). We can also display the top
+correlated genes (using `leadedge_label_n`).
+
+``` r
+## plot full heatmap
+sigProCon::spc_heatmap_all(
+  eset = eset,
+  spc_out = output,
+  subsample = 1000,
+  leadedge_label_n = 5
+)
+```
+
+<img src="man/figures/README-full.heatmap.subsample-1.png" alt="" width="100%" />
+
+### View KS plot of signature genes and scores:
 
 ``` r
 print(output$ks$plot)
 ```
 
-<img src="man/figures/README-ksplot-1.png" width="100%" />
+<img src="man/figures/README-ksplot-1.png" alt="" width="100%" />

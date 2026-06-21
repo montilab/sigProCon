@@ -29,7 +29,8 @@ little correlation.
 
 This package simply takes the correlation of each gene in the signature
 with the signature score, to identify the genes that are contributing
-most to the score.
+most to the score. It also supports the visualization of the results as
+an annotated heatmap and a KS plot.
 
 ## Installation
 
@@ -146,12 +147,12 @@ isTRUE(all.equal(toy_output$sig_score, toy_output_precomp$sig_score))
 
 ``` r
 #with our sample data
-data(signature)
-data(eset)
+data(sigProCon::signature)
+data(sigProCon::eset)
 
 output <- sigProCon::signature_projection_contributors(
-  eset = eset, 
-  signature = signature)
+  eset = sigProCon::eset, 
+  signature = sigProCon::signature)
 ```
 
 ### View tables:
@@ -182,7 +183,7 @@ print(head(output$sig_score))
 ``` r
 ## plot signature heatmap
 sigProCon::spc_heatmap_sig(
-  eset = eset,
+  eset = sigProCon::eset,
   spc_out = output
 )
 ```
@@ -194,7 +195,7 @@ sigProCon::spc_heatmap_sig(
 ``` r
 ## plot full heatmap
 sigProCon::spc_heatmap_all(
-  eset = eset,
+  eset = sigProCon::eset,
   spc_out = output
 )
 ```
@@ -210,7 +211,7 @@ correlated genes (using `leadedge_label_n`).
 ``` r
 ## plot full heatmap
 sigProCon::spc_heatmap_all(
-  eset = eset,
+  eset = sigProCon::eset,
   spc_out = output,
   subsample = 3000,
   leadedge_label_n = 5

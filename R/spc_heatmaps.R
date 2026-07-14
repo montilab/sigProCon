@@ -16,7 +16,8 @@
 #' @param show_row_names logical, whether to show row names
 #' @param show_column_names logical, whether to show column names
 #' @param row_names_side side for row names (\code{"left"} or \code{"right"})
-#' @param ... additional parameters to pass to ComplexHeatmap::Heatmap
+#' @param fontsize fontsize for column labels
+#' @param ... additional parameters to pass to \code{ComplexHeatmap::Heatmap}
 #'
 #' @return a ComplexHeatmap object
 #'
@@ -114,7 +115,8 @@ spc_heatmap_all <- function(
 #' @param show_row_names logical, whether to show row names
 #' @param show_column_names logical, whether to show column names
 #' @param row_names_side side for row names (\code{"left"} or \code{"right"})
-#' @param ... additional parameters to pass to ComplexHeatmap::Heatmap
+#' @param fontsize fontsize for row and column labels
+#' @param ... additional parameters to pass to \code{ComplexHeatmap::Heatmap}
 #'
 #' @return a ComplexHeatmap object
 #'

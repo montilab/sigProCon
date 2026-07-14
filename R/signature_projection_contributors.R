@@ -45,18 +45,24 @@ signature_projection_contributors <- function(
   cor_method = match.arg(cor_method)
   stopifnot( methods::is(signature, "list") )
   stopifnot( methods::is(eset, "SummarizedExperiment") || methods::is(eset, "ExpressionSet") )
+  ## END input checks
+
+  ## normalize to ExpressionSet first: sampleNames() (used below) has no
+  ## method for SummarizedExperiment
+  if ( methods::is(eset, "SummarizedExperiment") ) {
+    eset <- Biobase::ExpressionSet(
+      assayData = SummarizedExperiment::assay(eset),
+      phenoData = Biobase::AnnotatedDataFrame(as.data.frame(colData(eset))),
+      featureData = Biobase::AnnotatedDataFrame(as.data.frame(rowData(eset)))
+    )
+  }
+
+  ## BEGIN input checks (require ExpressionSet accessors)
   stopifnot( is.null(sig_score) || length(sig_score)==ncol(eset) )
   stopifnot( is.null(sig_score) || isTRUE(all.equal(names(sig_score), Biobase::sampleNames(eset))) )
   stopifnot( is.null(col_ha) || isTRUE(all(rownames(col_ha) %in% Biobase::sampleNames(eset))))
   ## END input checks
 
-  if ( methods::is(eset, "SummarizedExperiment") ) {
-    eset <- Biobase::ExpressionSet(
-      assayData = SummarizedExperiment::assay(eset),
-      phenoData = Biobase::AnnotatedDataFrame(colData(eset)),
-      featureData = Biobase::AnnotatedDataFrame(rowData(eset))
-    )
-  }
   ## compute score if not provided
   if ( is.null(sig_score) ) {
     sig_score <- omics_signature_score( eset = eset, signature = signature, method = method)

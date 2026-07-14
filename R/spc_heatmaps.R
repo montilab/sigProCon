@@ -22,7 +22,6 @@
 #'
 #' @import Biobase
 #' @importFrom ComplexHeatmap Heatmap HeatmapAnnotation rowAnnotation anno_barplot anno_mark
-#' @importFrom SummarizedExperiment assay colData rowData
 #' @importFrom methods is
 #' @importFrom grid gpar unit
 #'
@@ -121,7 +120,6 @@ spc_heatmap_all <- function(
 #'
 #' @import Biobase
 #' @importFrom ComplexHeatmap Heatmap HeatmapAnnotation rowAnnotation anno_barplot
-#' @importFrom SummarizedExperiment assay colData rowData
 #' @importFrom methods is
 #' @importFrom grid gpar
 #'
@@ -171,13 +169,7 @@ spc_heatmap_sig <- function(
   stopifnot(all(c("score_cor", "sig_score") %in% names(spc_out)))
   stopifnot(methods::is(eset, "SummarizedExperiment") || methods::is(eset, "ExpressionSet"))
 
-  if (methods::is(eset, "SummarizedExperiment")) {
-    eset <- Biobase::ExpressionSet(
-      assayData = SummarizedExperiment::assay(eset),
-      phenoData = Biobase::AnnotatedDataFrame(SummarizedExperiment::colData(eset)),
-      featureData = Biobase::AnnotatedDataFrame(SummarizedExperiment::rowData(eset))
-    )
-  }
+  eset <- .as_expressionset(eset)
 
   score_cor <- spc_out$score_cor
   sig_score <- spc_out$sig_score

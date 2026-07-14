@@ -19,7 +19,6 @@
 #'
 #' @import Biobase
 #' @importFrom ComplexHeatmap Heatmap HeatmapAnnotation rowAnnotation anno_barplot
-#' @importFrom SummarizedExperiment assay colData rowData
 #' @importFrom stats cor
 #' @importFrom methods is
 #' @importFrom grid gpar
@@ -49,13 +48,7 @@ signature_projection_contributors <- function(
 
   ## normalize to ExpressionSet first: sampleNames() (used below) has no
   ## method for SummarizedExperiment
-  if ( methods::is(eset, "SummarizedExperiment") ) {
-    eset <- Biobase::ExpressionSet(
-      assayData = SummarizedExperiment::assay(eset),
-      phenoData = Biobase::AnnotatedDataFrame(as.data.frame(colData(eset))),
-      featureData = Biobase::AnnotatedDataFrame(as.data.frame(rowData(eset)))
-    )
-  }
+  eset <- .as_expressionset(eset)
 
   ## BEGIN input checks (require ExpressionSet accessors)
   stopifnot( is.null(sig_score) || length(sig_score)==ncol(eset) )

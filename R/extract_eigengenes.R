@@ -17,8 +17,7 @@
 #'   independently and \code{"multiple"} for one joint call
 #' @param name_cleanup logical; remove leading \code{"ME"} from module names
 #'
-#' @return an \code{ExpressionSet} with eigengenes as features and input samples as
-#'   columns
+#' @return an \code{ExpressionSet} with eigengenes as features and input samples as columns
 #'
 #' @export
 extract_eigengenes <- function(
@@ -53,6 +52,7 @@ extract_eigengenes <- function(
   ## end checks
 
   ## for easier handling, create new fdata column
+  .warn_if_overwriting(colnames(Biobase::fData(eset)), "key")
   Biobase::fData(eset)$key <- if (is.null(key)) Biobase::featureNames(eset) else Biobase::fData(eset)[, key]
 
   ## remove signatures w/ not enough features

@@ -14,3 +14,16 @@
   }
   eset
 }
+
+## Warn when a column this package is about to write already exists in the
+## caller's pData/fData, since its prior values are about to be overwritten.
+#' @keywords internal
+.warn_if_overwriting <- function(existing_names, col) {
+  if (col %in% existing_names) {
+    warning(
+      "column '", col, "' already exists in the input eset and will be overwritten",
+      call. = FALSE
+    )
+  }
+  invisible(NULL)
+}

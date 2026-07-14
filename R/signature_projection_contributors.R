@@ -61,6 +61,7 @@ signature_projection_contributors <- function(
     sig_score <- omics_signature_score( eset = eset, signature = signature, method = method)
   }
   ## add signature score to eset metadata
+  .warn_if_overwriting(colnames(Biobase::pData(eset)), "sig_score")
   eset$sig_score <- sig_score
   stopifnot( all(!is.na(eset$sig_score)) )
 
@@ -68,8 +69,11 @@ signature_projection_contributors <- function(
   COR <- psych::corr.test(eset$sig_score, t(Biobase::exprs(eset)), method = cor_method)
   stopifnot(nrow(COR$r) == 1)
   stopifnot(nrow(COR$p) == 1)
+  .warn_if_overwriting(colnames(Biobase::fData(eset)), "score_cor")
+  .warn_if_overwriting(colnames(Biobase::fData(eset)), "pval_cor")
   Biobase::fData(eset)$score_cor <- drop(COR$r)
   Biobase::fData(eset)$pval_cor <- drop(COR$p)
+  .warn_if_overwriting(colnames(Biobase::fData(eset)), "insig")
   Biobase::fData(eset)$insig <- factor(
     ifelse(Biobase::featureNames(eset) %in% signature[[1]], 'signature', 'background'),
     levels = c("signature","background")
@@ -86,6 +90,7 @@ signature_projection_contributors <- function(
     plotting = TRUE
   )
   ## from idx to names
+  .warn_if_overwriting(colnames(Biobase::fData(eset_srt)), "leading_edge")
   fData(eset_srt)$leading_edge <- NA
   if (is.null(ks_out$leading_edge)) {
     ks_out$hits <- NA

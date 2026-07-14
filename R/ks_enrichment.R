@@ -87,6 +87,10 @@
   ## If weights are provided
   if ( !is.null(weights) ) {
     weights <- abs(weights[y])^weights.pwr
+    if ( sum(weights) == 0 ) {
+      warning("all weights are zero; cannot compute weighted enrichment score")
+      return(err)
+    }
 
     Pmis <- rep(1, n.x)
     Pmis[y] <- 0
@@ -95,7 +99,7 @@
     Phit <- rep(0, n.x)
     Phit[y] <- weights
     Phit <- cumsum(Phit)
-    Phit <- Phit / Phit[n.x] #this making error?
+    Phit <- Phit / Phit[n.x]
     z <- Phit - Pmis
 
     score <- if (absolute) max(z) - min(z) else z[leading_edge <- which.max(abs(z))]

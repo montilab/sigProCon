@@ -9,7 +9,6 @@
   y,
   weights = NULL,
   weights.pwr = 1,
-  absolute = FALSE,
   plotting = FALSE,
   plot.title = ""
 )
@@ -22,8 +21,6 @@
 \item{weights}{Weights for weighted score (Subramanian et al.)}
 
 \item{weights.pwr}{Exponent for weights (Subramanian et al.)}
-
-\item{absolute}{Takes max-min score rather than the max deviation from null}
 
 \item{plotting}{Use true to generate plot}
 

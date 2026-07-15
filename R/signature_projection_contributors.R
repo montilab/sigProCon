@@ -1,7 +1,8 @@
 #' This function generates an annotated heatmap that shows the contributions of genes to the given signature score
 #'
 #' @param eset an expression set
-#' @param signature a list of signatures (at least 1)
+#' @param signature a list containing exactly one signature (a character vector
+#'   of feature names); multi-signature scoring is not currently supported
 #' @param sig_score an aggregate signature score
 #' @param cor_method correlation method used by \code{psych::corr.test}
 #' @param col_ha a ComplexHeatmap::heatmapAnnotation object with columns' (i.e., samples') annotation
@@ -19,7 +20,6 @@
 #'
 #' @import Biobase
 #' @importFrom ComplexHeatmap Heatmap HeatmapAnnotation rowAnnotation anno_barplot
-#' @importFrom SummarizedExperiment assay colData rowData
 #' @importFrom stats cor
 #' @importFrom methods is
 #' @importFrom grid gpar
@@ -45,32 +45,38 @@ signature_projection_contributors <- function(
   cor_method = match.arg(cor_method)
   stopifnot( methods::is(signature, "list") )
   stopifnot( methods::is(eset, "SummarizedExperiment") || methods::is(eset, "ExpressionSet") )
+  ## END input checks
+
+  ## normalize to ExpressionSet first: sampleNames() (used below) has no
+  ## method for SummarizedExperiment
+  eset <- .as_expressionset(eset)
+
+  ## BEGIN input checks (require ExpressionSet accessors)
   stopifnot( is.null(sig_score) || length(sig_score)==ncol(eset) )
   stopifnot( is.null(sig_score) || isTRUE(all.equal(names(sig_score), Biobase::sampleNames(eset))) )
   stopifnot( is.null(col_ha) || isTRUE(all(rownames(col_ha) %in% Biobase::sampleNames(eset))))
   ## END input checks
 
-  if ( methods::is(eset, "SummarizedExperiment") ) {
-    eset <- Biobase::ExpressionSet(
-      assayData = SummarizedExperiment::assay(eset),
-      phenoData = Biobase::AnnotatedDataFrame(colData(eset)),
-      featureData = Biobase::AnnotatedDataFrame(rowData(eset))
-    )
-  }
   ## compute score if not provided
   if ( is.null(sig_score) ) {
     sig_score <- omics_signature_score( eset = eset, signature = signature, method = method)
   }
   ## add signature score to eset metadata
+  .warn_if_overwriting(colnames(Biobase::pData(eset)), "sig_score")
   eset$sig_score <- sig_score
   stopifnot( all(!is.na(eset$sig_score)) )
 
   ## add correlation (and p-value) of each gene with signature score to fData
-  COR <- psych::corr.test(eset$sig_score, t(Biobase::exprs(eset)), method = cor_method)
+  ## (ci = FALSE: confidence intervals are never used downstream, and computing
+  ## them is costly at the gene counts this is typically run on)
+  COR <- psych::corr.test(eset$sig_score, t(Biobase::exprs(eset)), method = cor_method, ci = FALSE)
   stopifnot(nrow(COR$r) == 1)
   stopifnot(nrow(COR$p) == 1)
+  .warn_if_overwriting(colnames(Biobase::fData(eset)), "score_cor")
+  .warn_if_overwriting(colnames(Biobase::fData(eset)), "pval_cor")
   Biobase::fData(eset)$score_cor <- drop(COR$r)
   Biobase::fData(eset)$pval_cor <- drop(COR$p)
+  .warn_if_overwriting(colnames(Biobase::fData(eset)), "insig")
   Biobase::fData(eset)$insig <- factor(
     ifelse(Biobase::featureNames(eset) %in% signature[[1]], 'signature', 'background'),
     levels = c("signature","background")
@@ -87,6 +93,7 @@ signature_projection_contributors <- function(
     plotting = TRUE
   )
   ## from idx to names
+  .warn_if_overwriting(colnames(Biobase::fData(eset_srt)), "leading_edge")
   fData(eset_srt)$leading_edge <- NA
   if (is.null(ks_out$leading_edge)) {
     ks_out$hits <- NA

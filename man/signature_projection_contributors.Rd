@@ -23,7 +23,8 @@ signature_projection_contributors(
 \arguments{
 \item{eset}{an expression set}
 
-\item{signature}{a list of signatures (at least 1)}
+\item{signature}{a list containing exactly one signature (a character vector
+of feature names); multi-signature scoring is not currently supported}
 
 \item{sig_score}{an aggregate signature score}
 
@@ -33,7 +34,7 @@ signature_projection_contributors(
 
 \item{min_sigsize}{minimum number of signature genes required to plot signature-only heatmap}
 
-\item{method}{how to compute the aggregate score (\code{"GSVA"}, \code{"eigengene"}, or \code{"pc"})}
+\item{method}{how to compute the aggregate score (`"GSVA"`, `"eigengene"`, or `"pc"`)}
 
 \item{name}{name for the heatmap}
 
@@ -46,7 +47,7 @@ passed to \code{spc_heatmap_all()} when \code{make_heatmap_all = TRUE}}
 
 \item{make_heatmap_sig}{logical, whether to generate signature-only heatmap}
 
-\item{...}{additional parameters to pass to \code{ComplexHeatmap::Heatmap}}
+\item{...}{additional parameters to pass to ComplexHeatmap::Heatmap}
 }
 \value{
 a list of a dataframe and two heatmaps

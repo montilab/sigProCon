@@ -16,13 +16,13 @@
 #' @param show_row_names logical, whether to show row names
 #' @param show_column_names logical, whether to show column names
 #' @param row_names_side side for row names (\code{"left"} or \code{"right"})
-#' @param ... additional parameters to pass to ComplexHeatmap::Heatmap
+#' @param fontsize fontsize for column labels
+#' @param ... additional parameters to pass to \code{ComplexHeatmap::Heatmap}
 #'
 #' @return a ComplexHeatmap object
 #'
 #' @import Biobase
 #' @importFrom ComplexHeatmap Heatmap HeatmapAnnotation rowAnnotation anno_barplot anno_mark
-#' @importFrom SummarizedExperiment assay colData rowData
 #' @importFrom methods is
 #' @importFrom grid gpar unit
 #'
@@ -51,7 +51,7 @@ spc_heatmap_all <- function(
 
   left_row_ha <- ComplexHeatmap::rowAnnotation(
     correlation = ComplexHeatmap::anno_barplot(prep$score_cor$score_cor),
-    show_annotation_name = FALSE
+    show_annotation_name = TRUE
   )
   right_row_ha <- ComplexHeatmap::rowAnnotation(
     genes = prep$score_cor$insig,
@@ -115,13 +115,13 @@ spc_heatmap_all <- function(
 #' @param show_row_names logical, whether to show row names
 #' @param show_column_names logical, whether to show column names
 #' @param row_names_side side for row names (\code{"left"} or \code{"right"})
-#' @param ... additional parameters to pass to ComplexHeatmap::Heatmap
+#' @param fontsize fontsize for row and column labels
+#' @param ... additional parameters to pass to \code{ComplexHeatmap::Heatmap}
 #'
 #' @return a ComplexHeatmap object
 #'
 #' @import Biobase
 #' @importFrom ComplexHeatmap Heatmap HeatmapAnnotation rowAnnotation anno_barplot
-#' @importFrom SummarizedExperiment assay colData rowData
 #' @importFrom methods is
 #' @importFrom grid gpar
 #'
@@ -171,13 +171,7 @@ spc_heatmap_sig <- function(
   stopifnot(all(c("score_cor", "sig_score") %in% names(spc_out)))
   stopifnot(methods::is(eset, "SummarizedExperiment") || methods::is(eset, "ExpressionSet"))
 
-  if (methods::is(eset, "SummarizedExperiment")) {
-    eset <- Biobase::ExpressionSet(
-      assayData = SummarizedExperiment::assay(eset),
-      phenoData = Biobase::AnnotatedDataFrame(SummarizedExperiment::colData(eset)),
-      featureData = Biobase::AnnotatedDataFrame(SummarizedExperiment::rowData(eset))
-    )
-  }
+  eset <- .as_expressionset(eset)
 
   score_cor <- spc_out$score_cor
   sig_score <- spc_out$sig_score

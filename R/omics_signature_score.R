@@ -1,7 +1,8 @@
 #' This function computes an aggregate score for a set of genes
 #'
 #' @param eset an expression set
-#' @param signature a list of signatures (at least 1)
+#' @param signature a list containing exactly one signature (a character vector
+#'   of feature names); multi-signature scoring is not currently supported
 #' @param method how to compute the aggregate score (`"GSVA"`, `"eigengene"`, or `"pc"`)
 #' @param ... additional parameters to pass to the method
 #'
@@ -20,7 +21,9 @@ omics_signature_score <- function(
 {
   ## input checks
   stopifnot( methods::is(eset,"ExpressionSet") )
-  stopifnot( length(signature)==1 ) # working w/ single signature only at the moment
+  if (length(signature) != 1) {
+    stop("'signature' must be a list containing exactly one signature; multi-signature scoring is not currently supported")
+  }
   stopifnot( isTRUE(all(signature[[1]] %in% Biobase::featureNames(eset))) )
   method <- match.arg(method)
 

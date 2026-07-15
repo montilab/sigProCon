@@ -19,8 +19,6 @@
 #' @param title Plot title
 #' @return A ggplot object
 #'
-#' @importFrom ComplexHeatmap anno_lines
-#'
 .ggeplot <- function(n, positions, x_axis, y_axis, title = "") {
   score <- which.max(abs(y_axis))
   ggplot2::ggplot(
@@ -46,21 +44,12 @@
       panel.border = ggplot2::element_rect(color = "black", fill = NA, linewidth = 1)
     )
 }
-## this needs to extrapolate so that x and y are same lenght as n
-.ks_anno_lines <- function( n, positions, x_axis, y_axis, title="" )
-{
-  score <- which.max(abs(y_axis))
-  ComplexHeatmap::anno_lines(
-    x = data.frame(x = x_axis, y = y_axis) |> as.matrix(),
-    which = "row", smooth = TRUE)
-}
 #' One-sided Kolmogorov–Smirnov test
 #'
 #' @param n.x The length of a ranked list
 #' @param y A vector of positions in the ranked list
 #' @param weights Weights for weighted score (Subramanian et al.)
 #' @param weights.pwr Exponent for weights (Subramanian et al.)
-#' @param absolute Takes max-min score rather than the max deviation from null
 #' @param plotting Use true to generate plot
 #' @param plot.title Plot title
 #' @return A list of data and plots
@@ -72,7 +61,6 @@
                     y,
                     weights = NULL,
                     weights.pwr = 1,
-                    absolute = FALSE, # this is not really implemented, should be removed
                     plotting = FALSE,
                     plot.title = "") {
   n.y <- length(y)
@@ -87,6 +75,10 @@
   ## If weights are provided
   if ( !is.null(weights) ) {
     weights <- abs(weights[y])^weights.pwr
+    if ( sum(weights) == 0 ) {
+      warning("all weights are zero; cannot compute weighted enrichment score")
+      return(err)
+    }
 
     Pmis <- rep(1, n.x)
     Pmis[y] <- 0
@@ -95,10 +87,10 @@
     Phit <- rep(0, n.x)
     Phit[y] <- weights
     Phit <- cumsum(Phit)
-    Phit <- Phit / Phit[n.x] #this making error?
+    Phit <- Phit / Phit[n.x]
     z <- Phit - Pmis
 
-    score <- if (absolute) max(z) - min(z) else z[leading_edge <- which.max(abs(z))]
+    score <- z[leading_edge <- which.max(abs(z))]
 
     x.axis <- 1:n.x
     y.axis <- z
@@ -120,7 +112,7 @@
 
     z <- D * hit - Y * mis
 
-    score <- if (absolute) max(z) - min(z) else z[leading_edge <- which.max(abs(z))]
+    score <- z[leading_edge <- which.max(abs(z))]
 
     x.axis <- Y
     y.axis <- z
@@ -147,7 +139,6 @@
   } else {
     .ggempty()
   }
-  ##p <- .ks_anno_lines(n.x, y, x.axis, y.axis)
   return(list(
     score = as.numeric(results$statistic),
     pval = results$p.value,

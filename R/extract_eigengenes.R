@@ -17,8 +17,7 @@
 #'   independently and \code{"multiple"} for one joint call
 #' @param name_cleanup logical; remove leading \code{"ME"} from module names
 #'
-#' @return an \code{ExpressionSet} with eigengenes as features and input samples as
-#'   columns
+#' @return an \code{ExpressionSet} with eigengenes as features and input samples as columns
 #'
 #' @export
 extract_eigengenes <- function(
@@ -50,13 +49,10 @@ extract_eigengenes <- function(
   if (!is.null(mod_fdata) && !all(names(signatures) %in% rownames(mod_fdata))) {
     stop("!all(names(signatures) %in% rownames(mod_fdata))")
   }
-  if (method == "multiple" && length(signatures) > 1) {
-    tmp <- utils::combn(signatures, 2, function(mod) length(intersect(mod[[1]], mod[[2]])), simplify = FALSE)
-    if (any(tmp > 0)) stop("method=='multiple' can't be used with overlapping signatures")
-  }
   ## end checks
 
   ## for easier handling, create new fdata column
+  .warn_if_overwriting(colnames(Biobase::fData(eset)), "key")
   Biobase::fData(eset)$key <- if (is.null(key)) Biobase::featureNames(eset) else Biobase::fData(eset)[, key]
 
   ## remove signatures w/ not enough features
@@ -64,6 +60,14 @@ extract_eigengenes <- function(
     length(intersect(Z, Biobase::fData(eset)$key))
   }, numeric(1)) >= min_size]
   if (length(signatures1) < 1) stop("no module left")
+
+  ## overlap check must be based on the features actually present in eset:
+  ## genes absent from the data are irrelevant and shouldn't trigger a false rejection
+  if (method == "multiple" && length(signatures1) > 1) {
+    signatures1_eff <- lapply(signatures1, function(Z) intersect(Z, Biobase::fData(eset)$key))
+    tmp <- utils::combn(signatures1_eff, 2, function(mod) length(intersect(mod[[1]], mod[[2]])), simplify = FALSE)
+    if (any(tmp > 0)) stop("method=='multiple' can't be used with overlapping signatures")
+  }
 
   ## reduce eset to features in signatures
   eset1 <- eset[Biobase::fData(eset)$key %in% unique(unlist(signatures1)), ]

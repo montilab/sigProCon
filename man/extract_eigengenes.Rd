@@ -32,8 +32,7 @@ independently and \code{"multiple"} for one joint call}
 \item{name_cleanup}{logical; remove leading \code{"ME"} from module names}
 }
 \value{
-an \code{ExpressionSet} with eigengenes as features and input samples as
-columns
+an \code{ExpressionSet} with eigengenes as features and input samples as columns
 }
 \description{
 Extract module eigengenes from an expression set

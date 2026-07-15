@@ -38,7 +38,7 @@ You can install sigProCon from
 [GitHub](https://github.com/) with:
 
 ``` r
-# install.packages("devtools")
+# install.packages("remotes")
 remotes::install_github("montilab/sigProCon")
 ```
 

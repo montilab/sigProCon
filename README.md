@@ -44,6 +44,9 @@ devtools::install_github("montilab/sigProCon@dev")
 
 ## Example with toy sample data:
 
+sigProCon ships with a small toy signature and toy expression set for
+quick experimentation; here we check their sizes:
+
 ``` r
 data(toy_signature)
 data(toy_eset)
@@ -55,6 +58,10 @@ print(dim(toy_eset))
 ```
 
 ### View toy data tables:
+
+`signature_projection_contributors()` returns, among other things, each
+gene’s correlation to the signature score (`score_cor`) and each
+sample’s computed score (`sig_score`):
 
 ``` r
 toy_output <- sigProCon::signature_projection_contributors(
@@ -84,6 +91,10 @@ print(head(toy_output$sig_score))
 
 ### View toy heatmap that plots all signature and non-signature genes:
 
+`spc_heatmap_all()` draws every gene in the dataset ranked by its
+correlation to the signature score, with signature genes and KS
+leading-edge hits flagged on the right:
+
 ``` r
 ## plot full heatmap
 sigProCon::spc_heatmap_all(
@@ -95,6 +106,10 @@ sigProCon::spc_heatmap_all(
 <img src="man/figures/README-toy-full.heatmap-1.png" alt="" width="100%" />
 
 ### View toy heatmap that plots only signature genes:
+
+`spc_heatmap_sig()` shows the same information restricted to just the
+signature genes, which is easier to read when the full gene set is
+large:
 
 ``` r
 ## plot signature heatmap
@@ -108,16 +123,27 @@ sigProCon::spc_heatmap_sig(
 
 ### View toy KS plot of signature genes and scores:
 
+The KS plot shows where the signature genes fall along the full ranked
+gene list (by correlation to the score) — a peak early in the list means
+the signature genes are concentrated among the most correlated genes,
+similar to a GSEA enrichment plot:
+
 ``` r
 print(toy_output$ks$plot)
 ```
 
 <img src="man/figures/README-toy-ksplot-1.png" alt="" width="100%" />
 
-`omics_signature_score()` supports `"GSVA"`, `"eigengene"`, and `"pc"`
-methods.
+Under the hood, the signature score is computed by
+`omics_signature_score()`, which supports three methods: `"GSVA"` (the
+default), `"eigengene"` (the module’s first eigengene via WGCNA), and
+`"pc"` (a direct principal-component score).
 
 #### Passing a pre-computed score
+
+If you already have a signature score (or want to reuse one across
+multiple calls), pass it directly via `sig_score` to skip recomputing
+it:
 
 ``` r
 toy_score <- sigProCon::omics_signature_score(
@@ -145,6 +171,9 @@ isTRUE(all.equal(toy_output$sig_score, toy_output_precomp$sig_score))
 
 ## Example with package sample data (`eset` and `signature`):
 
+The package also ships a larger, more realistic dataset (`eset` and
+`signature`) for demonstration:
+
 ``` r
 #with our sample data
 data(sigProCon::signature)
@@ -156,6 +185,9 @@ output <- sigProCon::signature_projection_contributors(
 ```
 
 ### View tables:
+
+As with the toy example, `score_cor` and `sig_score` hold the per-gene
+correlations and per-sample scores:
 
 ``` r
 ## Show some of the genes' correlation to the signature score
@@ -180,6 +212,8 @@ print(head(output$sig_score))
 
 ### View heatmap that plots only signature genes:
 
+Signature-only view for the full dataset:
+
 ``` r
 ## plot signature heatmap
 sigProCon::spc_heatmap_sig(
@@ -191,6 +225,8 @@ sigProCon::spc_heatmap_sig(
 <img src="man/figures/README-sig.heatmap-1.png" alt="" width="100%" />
 
 ### View heatmap that plots all signature and non-signature genes:
+
+All-genes view for the full dataset:
 
 ``` r
 ## plot full heatmap
@@ -221,6 +257,8 @@ sigProCon::spc_heatmap_all(
 <img src="man/figures/README-full.heatmap.subsample-1.png" alt="" width="100%" />
 
 ### View KS plot of signature genes and scores:
+
+KS plot for the full dataset:
 
 ``` r
 print(output$ks$plot)
